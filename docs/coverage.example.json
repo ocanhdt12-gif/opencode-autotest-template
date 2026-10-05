@@ -1,14 +1,12 @@
 {
-  "_comment": "Bảng theo dõi độ phủ test — DEV cập nhật trạng thái, TEST đọc để biết phần nào đã/chưa test. KHÔNG sửa tay phần test tự ghi; DEV set 'pending' cho req mới/đổi.",
-  "specVersion": "1.0.0",
-  "scopeVersion": 0,
+  "_comment": "Board độ phủ test — thuộc template TEST (repo test), KHÔNG nằm trong spec của dev. Khởi tạo bằng /coverage --init từ .spec-cache/SPECIFICATIONS.md.",
+  "specVersion": "1.5.0",
   "updatedAt": null,
   "requirements": [
     {
       "id": "R-01",
-      "title": "(ví dụ) đăng ký tài khoản",
+      "title": "ví dụ: đăng ký tài khoản",
       "status": "untested",
-      "specVersionAdded": "1.0.0",
       "testRef": null,
       "lastRunAt": null,
       "notes": ""

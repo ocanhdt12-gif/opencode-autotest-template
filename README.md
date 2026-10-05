@@ -13,7 +13,7 @@ Template OpenCode chuyên **sinh + duy trì Auto Test** — viết test từ spe
 | 3 | **Regression** | `/regression` | Sau update → retest luồng cũ, đảm bảo không vỡ |
 | 4 | **Manual → Auto** | `/capture-manual` | Case đã test tay xong → chụp thành auto test |
 | 5 | **Theo case user** | `/from-cases` | User/khách đưa bộ test case → chuyển thành auto test |
-| — | **Độ phủ** | `/coverage` | Xem req nào đã/chưa test (board `spec/coverage.json` từ dev) |
+| — | **Độ phủ** | `/coverage` | Xem req nào đã/chưa test (board `.context/coverage.json` — do test tự lưu) |
 
 ## Quickstart
 
@@ -87,12 +87,13 @@ Golden test khóa behavior hiện tại (scrub timestamp/id/random) → mutation
 
 ### 8. Độ phủ test (biết đã/chưa test đến đâu)
 ```bash
+/coverage --init     # khởi tạo board từ spec (.spec-cache/SPECIFICATIONS.md → mọi R-xx = untested)
 /coverage            # xem board: req nào covered/pending/untested/failing
 /coverage --gaps     # chỉ phần CHƯA test
-/coverage --report   # xuất .context/coverage-report.json báo về dev
 ```
-- Đọc `.spec-cache/spec/coverage.json` (board của dev) → req `pending`/`untested` → cần test; `covered` → bỏ qua
-- Sau khi test → xuất report để dev cập nhật board
+- Board **thuộc template TEST**: lưu ở `.context/coverage.json` (repo test) — vì chỉ test mới biết nó đã chạy gì
+- Danh sách req lấy từ spec (qua link git); **trạng thái do test tự cập nhật** sau mỗi lần chạy
+- DEV không giữ board này
 
 ## Cấu trúc thư mục
 
