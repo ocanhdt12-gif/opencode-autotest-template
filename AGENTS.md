@@ -20,7 +20,7 @@ Entry point mọi session. Phân loại intent rồi route.
 ## Mặc định khi session bắt đầu
 1. `/spec-link --sync` — pull spec mới nhất về `.spec-cache/` (nếu chưa link → hỏi link)
 2. Đọc `.spec-cache/SPECIFICATIONS.md` — nguồn truth
-3. Đọc `.spec-cache/SPECIFICATIONS.md` + `.spec-cache/spec/test-scope/current.json` — spec + scope mới từ dev; đối chiếu board `.context/coverage.json` (req nào chưa test)
+3. Đọc `.spec-cache/spec/test-scope/current.json` — scope mới từ dev; đối chiếu board `.context/coverage.json` (req nào chưa test)
 4. Chạy test suite hiện tại xem pass không (`npm test` / `pytest`)
 5. Check `.context/manual-cases/` — case manual chưa chuyển auto
 
