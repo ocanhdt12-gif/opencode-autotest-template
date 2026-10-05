@@ -15,8 +15,8 @@
 4. Chạy `impact.regression` — chuyển `/regression` nếu cần chuyên sâu
 5. `risk: high` → bắt buộc mutation verify
 6. Cập nhật `.context/test-status.json` (specVersionCovered / scopeVersionCovered)
-7. **Đăng ký TỰ ĐỘNG (cuối luồng)** — kiểm tra trùng rồi append/cập nhật test vào bộ hoàn chỉnh (`test-registry.json` + `.context/coverage.json`). Không cần gõ command.
-8. Báo cáo: test mới / test lại pass-fail, ghi chú
+7. **Đăng ký + quét độ phủ TỰ ĐỘNG (cuối luồng)** — kiểm tra trùng rồi append/cập nhật test vào bộ hoàn chỉnh + **tự quét** board độ phủ (`test-registry.json` + `.context/coverage.json`). Không cần gõ command nào (kể cả `/coverage`).
+8. Báo cáo: test mới / test lại pass-fail · độ phủ covered X/Y req · ghi chú
 
 ## Không có scope file?
 - Hỏi user: chạy full (`/autotest --full`) hay chỉ module X?
@@ -27,4 +27,4 @@
 - Test mới vẫn phải qua quality gate (không test vô hại)
 - Nếu `scopeVersion` đã cover rồi → báo "đã cover", không test lại
 - Test mới **append vào bộ test hoàn chỉnh** — không tạo suite riêng cho luồng
-- Cuối luồng **tự động kiểm tra trùng** rồi đăng ký — không cần command riêng
+- Cuối luồng **tự động kiểm tra trùng** rồi đăng ký + **tự quét độ phủ** — không cần command riêng

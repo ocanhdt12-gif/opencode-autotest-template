@@ -116,9 +116,9 @@
 
 ---
 
-## Đăng ký bộ test hoàn chỉnh (mọi luồng đều gọi)
+## Đăng ký bộ test hoàn chỉnh + quét độ phủ (mọi luồng TỰ ĐỘNG)
 
-Cuối MỌI luồng sinh/chạy test, thực hiện 3 việc sau (giữ 1 bộ duy nhất, không tạo suite song song):
+Cuối MỌI luồng sinh/chạy test, agent **tự chạy** các việc sau (giữ 1 bộ duy nhất, không tạo suite song song). Người dùng KHÔNG gõ command:
 
 1. **Ghi manifest** `test-registry.json` (root repo TEST) — mỗi test 1 entry:
    ```jsonc
@@ -134,8 +134,10 @@ Cuối MỌI luồng sinh/chạy test, thực hiện 3 việc sau (giữ 1 bộ 
    }
    ```
 2. **Không tạo file/suite test mới tách rời** — test mới append vào file hiện có theo module, hoặc thêm file nhưng cùng `tests/` và cùng được liệt kê trong registry.
-3. **Cập nhật board** `.context/coverage.json` (req → `covered`/`failing` + `testRef` + `lastRunAt`) — retest sau này bám board để biết chạy cái gì.
+3. **Tự quét độ phủ** `.context/coverage.json` (KHÔNG gõ `/coverage`): board thiếu → tự khởi tạo từ `.spec-cache/SPECIFICATIONS.md`; req trong `refs` vừa chạy → `covered`/`failing` + `testRef` + `lastRunAt`; req mới trong spec → `pending`/`untested` — retest sau này bám board để biết chạy cái gì.
 
 **Rule chống trùng:** trước khi thêm test, tra `test-registry.json` — đã có test phủ cùng `requirement` + cùng behavior → **cập nhật** thay vì thêm bản sao.
 
-**Rule additive:** luồng nào cũng chạy bước 1-3. Luồng 3 (regression) chỉ cập nhật `status`/`lastRunAt`, KHÔNG sinh test mới (trừ khi `test-reflector` phát hiện thiếu).
+**Rule additive:** luồng nào cũng chạy bước 1-3 TỰ ĐỘNG. Luồng 3 (regression) chỉ cập nhật `status`/`lastRunAt`, KHÔNG sinh test mới (trừ khi `test-reflector` phát hiện thiếu).
+
+**Rule coverage:** `/coverage` chỉ để **xem báo cáo** — board do bước tự động này cập nhật, không gõ tay.

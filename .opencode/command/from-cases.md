@@ -13,7 +13,7 @@ Chuyển bộ test case user/khách đưa (Excel/MD/sheet/checklist) thành auto
    - ✅ Tự động hoá được → `test-writer` sinh test **đúng case đó**
    - ❌ Không (cần mắt người) → đánh dấu `manual-only` + lý do
 3. Chạy toàn bộ → báo case nào PASS / FAIL / không tự động hoá được
-4. Case tự động hoá xong → **Đăng ký TỰ ĐỘNG (cuối luồng)** — kiểm tra trùng rồi append vào bộ test hoàn chỉnh + `regression=true`. Không cần gõ command.
+4. Case tự động hoá xong → **Đăng ký + quét độ phủ TỰ ĐỘNG (cuối luồng)** — kiểm tra trùng rồi append vào bộ hoàn chỉnh + `regression=true` + tự quét độ phủ. Không cần gõ command.
 
 ## Rule
 - Bám ĐÚNG test case user — KHÔNG tự thêm yêu cầu/giả định ngoài case

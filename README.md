@@ -4,7 +4,7 @@ Template OpenCode chuyên **sinh + duy trì Auto Test** — viết test từ spe
 
 > **Match với template dev:** **SPEC là cái chung duy nhất** — nhưng template test **KHÔNG lưu spec**; nó giữ **link git** tới folder spec của repo DEV (`spec-source.json` + `/spec-link <git-url>`) → sync về `.spec-cache/` mỗi lần chạy, tránh 2 bản spec lệch nhau. Template DEV sinh `.spec-cache/...` — xem `docs/SPEC_VERSIONING.md`.
 
-> ⭐ **Một bộ test hoàn chỉnh:** mọi luồng test đều chỉ để **nuôi 1 bộ test duy nhất** (`tests/`), vừa retest tính năng cũ vừa test feature mới. Luồng nào chạy xong cũng **bổ sung/cập nhật** vào bộ này + ghi `test-registry.json` (nguồn gốc, ref, trạng thái) — không tạo suite song song. Xem `docs/FLOWS.md` mục "Đăng ký bộ test hoàn chỉnh".
+> ⭐ **Một bộ test hoàn chỉnh (tự động):** mọi luồng test đều chỉ để **nuôi 1 bộ test duy nhất** (`tests/`), vừa retest tính năng cũ vừa test feature mới. Luồng nào chạy xong **tự động** bổ sung/cập nhật vào bộ này + ghi `test-registry.json` + **tự quét độ phủ** (`.context/coverage.json`) — không tạo suite song song, không cần gõ command. Xem `docs/FLOWS.md` mục "Đăng ký bộ test hoàn chỉnh + quét độ phủ".
 
 ## 5 luồng test (chi tiết: `docs/FLOWS.md`)
 
@@ -15,8 +15,8 @@ Template OpenCode chuyên **sinh + duy trì Auto Test** — viết test từ spe
 | 3 | **Regression** | `/regression` | Sau update → retest luồng cũ, đảm bảo không vỡ |
 | 4 | **Manual → Auto** | `/capture-manual` | Case đã test tay xong → chụp thành auto test |
 | 5 | **Theo case user** | `/from-cases` | User/khách đưa bộ test case → chuyển thành auto test |
-| — | **Độ phủ** | `/coverage` | Xem req nào đã/chưa test (board `.context/coverage.json` — do test tự lưu) |
-| — | **Đăng ký bộ test** ⭐ (TỰ ĐỘNG) | — (không gõ) | Cuối MỌI luồng test tự chạy: kiểm tra trùng → ghi test mới/đổi vào `test-registry.json` + board |
+| — | **Độ phủ** | `/coverage` (chỉ xem) | Xem req nào đã/chưa test — board `.context/coverage.json` **tự quét** cuối mỗi luồng |
+| — | **Đăng ký + quét độ phủ** ⭐ (TỰ ĐỘNG) | — (không gõ) | Cuối MỌI luồng tự chạy: kiểm tra trùng → ghi `test-registry.json` + tự quét board |
 
 ## Quickstart
 
@@ -88,21 +88,22 @@ Golden test khóa behavior hiện tại (scrub timestamp/id/random) → mutation
 - Quality gate — chống expected-từ-code, try-catch nuốt lỗi, assert trivially
 - Hidden stash — test ẩn chạy CI, chống overfit
 
-### 8. Độ phủ test (biết đã/chưa test đến đâu)
+### 8. Độ phủ test (biết đã/chưa test đến đâu) — TỰ ĐỘNG cập nhật
 ```bash
-/coverage --init     # khởi tạo board từ spec (.spec-cache/SPECIFICATIONS.md → mọi R-xx = untested)
-/coverage            # xem board: req nào covered/pending/untested/failing
+/coverage            # XEM board: req nào covered/pending/untested/failing
 /coverage --gaps     # chỉ phần CHƯA test
 ```
+- Board **tự quét** ở cuối mỗi luồng test (không gõ `/coverage` để cập nhật) — xem bước 9
 - Board **thuộc template TEST**: lưu ở `.context/coverage.json` (repo test) — vì chỉ test mới biết nó đã chạy gì
-- Danh sách req lấy từ spec (qua link git); **trạng thái do test tự cập nhật** sau mỗi lần chạy
+- Danh sách req lấy từ spec (qua link git); **trạng thái do bước tự động cập nhật** sau mỗi lần chạy
+- Board thiếu → bước tự động **tự khởi tạo** từ spec (tương đương `/coverage --init`, không gõ)
 - DEV không giữ board này
 
-### 9. ⭐ Đăng ký bộ test hoàn chỉnh — TỰ ĐỘNG (không cần gõ)
-- Mọi luồng (full / test-scope / regression / manual / from-cases / characterize) **tự chạy bước này khi kết thúc** — anh không phải gõ command nào
+### 9. ⭐ Đăng ký + quét độ phủ — TỰ ĐỘNG (không cần gõ)
+- Mọi luồng (full / test-scope / regression / manual / from-cases / characterize) **tự chạy bước này khi kết thúc** — anh không phải gõ command nào (kể cả `/coverage`)
 - Kiểm tra trùng trước khi ghi: cùng `refs`+behavior → cập nhật; chưa có → append
 - Ghi `test-registry.json`: mỗi test 1 entry — `file` · `refs` (R-xx/case id) · `origin` (luồng nào sinh) · `regression` · `status` · `lastRunAt`
-- Cập nhật `.context/coverage.json` (req → `covered`/`failing` + `testRef`)
+- **Tự quét độ phủ** `.context/coverage.json` (req → `covered`/`failing` + `testRef`)
 - **Không tạo suite song song**: test mới append vào bộ hiện có
 - Kết quả: luôn có **1 bộ test hoàn chỉnh** để retest tính năng cũ + test feature mới
 
