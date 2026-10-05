@@ -17,7 +17,7 @@ Compress conversation history khi context phình to. Giữ lại info quan trọ
 ### Always Pin (never compress away)
 1. `SPECIFICATIONS.md` — chỉ giữ feature list (top-level), không giữ full detail
 2. `.context/progress.json` — full, luôn luôn
-3. `.context/error-memory.md` — chỉ giữ 5 entries gần nhất
+3. `.context/test-notes.md` — chỉ giữ 5 entries gần nhất (nếu có)
 4. `.context/decisions.md` — full
 5. Current task file — full
 6. File đang edit — full
@@ -67,7 +67,7 @@ Sau khi write compressed-summary.md, agent chỉ cần load:
 ```
 - .context/compressed-summary.md  ← thay cho toàn bộ history
 - .context/progress.json
-- .context/error-memory.md (last 5)
+- .context/test-notes.md (last 5, nếu có)
 - Current task file
 - Files đang edit
 ```

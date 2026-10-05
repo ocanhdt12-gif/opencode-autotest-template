@@ -1,6 +1,6 @@
 # AGENT.md — Autotest Generation Pipeline
 
-> Template xử lý bài toán: **sinh + duy trì auto test** cho code mới (test-first), legacy (characterization), và sau manual test (capture). Match với template dev: spec chung + Error Analyzer chung.
+> Template xử lý bài toán: **sinh + duy trì auto test** cho code mới (test-first), legacy (characterization), và sau manual test (capture). Match với template dev: **chỉ spec là cái chung** (`SPECIFICATIONS.md`).
 
 ## 3 Nhánh core
 
@@ -23,10 +23,7 @@ TEST PLANNER → test plan traceable (mỗi test → requirement id)
       └── Nhánh C: manual-capture-writer (case manual → auto test)
       │
       ▼
-TEST REFLECTOR — chạy + phân loại fail: bug-test / bug-code
-      │  FAIL
-      ▼
-ERROR ANALYZER (match template dev) — 4 phases Iron Law → `.context/error-memory.md` → lần sau tránh
+TEST REFLECTOR — chạy + phân loại fail: bug-test / bug-code → sửa đúng chỗ
       │
       ▼
 VERIFY-TESTS — mutation testing + quality gate + hidden stash → PASS/FAIL
@@ -39,7 +36,7 @@ VERIFY-TESTS — mutation testing + quality gate + hidden stash → PASS/FAIL
 3. Characterization: **mutation check bắt được** (test vô nghĩa nếu phá code mà test không fail)
 4. Manual→Auto: case tự động hóa được phải **xanh khi chạy**; không ép manual-only
 5. `verify-tests`: mutation score ≥ ngưỡng + quality gate + hidden stash — trước khi merge
-6. Mọi fail đi qua **Error Analyzer** → `error-memory.md` (field `stack: dev|autotest`)
+6. Mọi fail → test-reflector phân loại → sửa đúng chỗ
 
 ## Conventions
 

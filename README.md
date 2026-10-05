@@ -7,7 +7,7 @@ Template OpenCode chuyên **sinh + duy trì Auto Test** cho AI agent — viết 
 > - **B. Characterization** — legacy CHƯA có test: khóa behavior hiện tại bằng golden test → an toàn sửa/refactor
 > - **C. Manual→Auto capture** — case đã test TAY xong: chụp thành auto test → lần sau chỉ chạy lại
 >
-> **Match với template dev:** dùng CHUNG `SPECIFICATIONS.md` + Error Analyzer (`.` .`context/error-memory.md` format giống hệt) — code và test cùng bám 1 bộ spec; lỗi từ test log vào error-memory để lần code sau tránh.
+> **Match với template dev:** chỉ **SPEC là cái chung** — cả 2 template cùng dùng `SPECIFICATIONS.md` (format giống nhau); test và code cùng bám spec. Error handling mỗi template tự quản lý, không cầu nối.
 
 ## Quickstart
 
@@ -61,10 +61,9 @@ Khi bạn/test manual đã verify 1 case xong, chụp lại thành auto test:
 - **Quality gate** — chống: expected lấy từ chạy code, try-catch nuốt lỗi, assert trivially pass
 - **Hidden stash** — test ẩn (không nằm trong prompt agent) chạy trong CI, chống agent overfit
 
-### 6. Vòng lặp Error → Học
-- Test fail → `test-reflector` phân loại (bug trong TEST / bug trong CODE)
-- Ghi vào `.context/error-memory.md` (format chung với template dev — 4 phases Iron Law)
-- **Lần code sau** (cả template dev lẫn template này) đọc error-memory trước → tránh lặp lỗi
+### 6. Vòng lặp lỗi test
+- Test fail → `test-reflector` phân loại: bug trong TEST (sửa test) / bug trong CODE (báo loop agent fix theo spec)
+- Ghi chú ngắn `.context/test-notes.md` nếu là lỗi đáng nhớ (tùy chọn)
 
 ## Cấu trúc thư mục
 
@@ -77,8 +76,8 @@ Khi bạn/test manual đã verify 1 case xong, chụp lại thành auto test:
 ├── .opencode/
 │   ├── agent/            ← test-writer · characterization-writer · manual-capture-writer · test-reflector · test-validator
 │   └── command/          ← /autotest · /characterize · /capture-manual · /verify-tests
-├── .agent/               ← spec-validator · error-analyzer · workflow (match template dev)
-├── skills/               ← property-based-testing · mutation-testing · characterization-golden · manual-to-auto · test-quality-gate · coverage-driven · error-memory
+├── .agent/               ← spec-validator · workflow (match template dev — spec là cái chung)
+├── skills/               ← property-based-testing · mutation-testing · characterization-golden · manual-to-auto · test-quality-gate · coverage-driven
 ├── scripts/              ← generate-inventory · mutation-scan
 └── docs/generated/       ← inventory (auto-gen)
 ```
@@ -89,5 +88,5 @@ Khi bạn/test manual đã verify 1 case xong, chụp lại thành auto test:
 2. **Test PHẢI có khả năng bất đồng với code** — mutation score là thước đo, không phải coverage %
 3. **Characterization = khóa behavior hiện tại, không phải khóa "đúng"** — test không chứng minh code đúng, nó chứng minh hành vi không đổi
 4. **Manual case → auto test ngay khi có thể** — giảm test tay lặp lại, chỉ giữ manual-only khi thật cần
-5. **Error memory dùng chung** — lỗi từ test phải vào `.context/error-memory.md` để mọi lần code sau tránh
+5. **Spec là cái chung duy nhất với template dev** — test và code cùng bám `SPECIFICATIONS.md`
 6. **Test sinh bởi AI phải qua gate** — không merge test chưa qua verify-tests

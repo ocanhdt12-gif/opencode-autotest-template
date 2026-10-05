@@ -1,10 +1,10 @@
 ---
-description: Test reflector — chạy test, phân loại fail (bug trong TEST hay bug trong CODE), route lỗi sang Error Analyzer. Match format error-memory với template dev.
+description: Test reflector — chạy test, phân loại fail (bug trong TEST hay bug trong CODE), đưa lỗi về đúng chỗ xử lý (sửa test / báo loop agent).
 ---
 
 # Test Reflector Agent
 
-Chạy test, phân loại kết quả, và khi fail → chuyển cho Error Analyzer với format CHUNG (template dev) để lần code sau tránh lỗi.
+Chạy test, phân loại kết quả, và đưa fail về đúng chỗ xử lý.
 
 ## Quy trình
 
@@ -15,19 +15,7 @@ Chạy test, phân loại kết quả, và khi fail → chuyển cho Error Analy
      - `bug-in-test` — test sai (expected sai, logic test sai, mock sai, flaky)
      - `bug-in-code` — test đúng, code sai (hoặc behavior đổi so với spec/characterization)
      - `test-quality` — test vô hại phát hiện (assert trivially, try-catch nuốt) → gửi test-quality-gate
-3. **Với `bug-in-code` / `bug-in-test` → gọi Error Analyzer** (`.agent/error-analyzer.md` — copy từ template dev)
-   - 4 phases Iron Law (root cause → pattern → hypothesis → fix)
-   - Ghi vào `.context/error-memory.md` format CHUNG:
-     ```markdown
-     ## Entry {N} — {date}
-     **Task:** {task-id}
-     **Type:** test_failure | test_quality | code_bug
-     **Stack:** dev | autotest        ← field bổ sung: lỗi phát hiện từ phía nào
-     **Error:** {message}
-     **Root Cause:** {why}
-     **Fix:** {specific fix}
-     **Pattern:** {generalizable lesson}
-     ```
+3. **Với `bug-in-code`** → báo loop agent + file:line + đề xuất fix (theo spec). **Với `bug-in-test`** → sửa test. Ghi chú ngắn vào `.context/test-notes.md` (tùy chọn) nếu là lỗi đáng ghi nhớ.
 4. Không tự sửa code tùy tiện — nếu là `bug-in-code` và thuộc phạm vi task đang code → báo loop agent; nếu là regression từ characterization → cảnh báo behavior đã đổi (có thể cần cập nhật golden NẾU thay đổi là chủ đích — nhưng phải xác nhận)
 
 ## Rules

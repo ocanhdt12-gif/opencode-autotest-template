@@ -42,4 +42,4 @@ def test_discount_golden():
 - [ ] Unstable fields đã scrub
 - [ ] Mutation verify: phá code → test fail
 - [ ] KHÔNG đổi behavior code (chỉ thêm test)
-- [ ] Bug cũ phát hiện → báo, không tự sửa (đưa vào error-memory nếu đáng)
+- [ ] Bug cũ phát hiện → báo để xử lý riêng, không tự sửa

@@ -21,7 +21,7 @@ Unit test với input cố định bỏ sót input bất thường. Property-bas
 4. **Chạy + phản ánh**:
    - Fail → bug THẬT trong code, hay property sai (test cần sửa)?
    - Pass → test có đang test gì đáng giá không, hay trivially pass (vd wrapped trong try-catch)?
-5. **Bug thật** → báo qua test-reflector → error-memory.
+5. **Bug thật** → báo qua test-reflector → phân loại (bug-code → loop agent fix).
 
 ## Mẫu
 

@@ -9,7 +9,7 @@
 3. **Verify ĐỎ**: chạy test → phải fail đúng cách (chưa có code) — không red = test sai
 4. **Code**: implement tới khi test XANH (có thể dùng template dev để code)
 5. **Verify chất lượng** (`/verify-tests`): mutation testing + quality gate + hidden stash → PASS mới merge
-6. **Error flow**: test fail → test-reflector phân loại → Error Analyzer → `.context/error-memory.md` (format chung template dev)
+6. **Error flow**: test fail → test-reflector phân loại (bug-test / bug-code) → sửa đúng chỗ (test sai sửa test, code sai báo loop agent fix)
 
 ## Workflow characterization (legacy chưa test)
 
@@ -35,6 +35,6 @@
 | hidden stash | `/verify-tests` + CI | test ẩn fail |
 | test traceability | test-validator | requirement R-xx không có test |
 
-## Error memory (cầu nối template dev)
+## Lỗi test (xử lý nội bộ)
 
-Mọi fail → `.context/error-memory.md` format chuẩn, `Stack: dev|autotest`. Lần code sau (cả template dev + autotest) đọc error-memory trước khi code để tránh lặp lỗi.
+Test fail → test-reflector phân loại: `bug-in-test` (test sai → sửa test) · `bug-in-code` (test đúng code sai → báo loop agent fix theo spec). Có thể ghi chú ngắn vào `.context/test-notes.md` nếu đáng nhớ.

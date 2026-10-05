@@ -54,7 +54,7 @@ Khi agent bắt đầu session mới:
    - All layers done → Project complete
 3. **Read context:**
    - Current task file (nếu có)
-   - `.context/error-memory.md` (recent errors)
+   - `.context/test-notes.md` (recent test issues — tùy chọn)
    - `.context/decisions.md` (past decisions for consistency)
 4. **Continue execution** theo trạng thái
 
