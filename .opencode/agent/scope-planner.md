@@ -8,7 +8,7 @@ description: Scope planner — đọc .spec-cache/spec/test-scope/current.json (
 
 ## Input
 - `.spec-cache/spec/test-scope/current.json` — hợp đồng (xem `skills/test-scope-contract`, schema `docs/SPEC_VERSIONING.md`)
-- `.context/coverage.json` — **board độ phủ CỦA TEST** (req đã/chưa test — test tự lưu, khởi tạo bằng `/coverage --init`)
+- `.context/coverage.json` — **tiến độ test CỦA TEST** (req đã/chưa test — test tự lưu; danh sách req đọc từ spec, không tạo spec)
 - `.spec-cache/SPECIFICATIONS.md` — để verify `specRefs` + so version
 - `.context/test-status.json` — đã cover đến specVersion/scopeVersion nào
 - Test suite hiện có (`tests/`)
@@ -31,14 +31,15 @@ description: Scope planner — đọc .spec-cache/spec/test-scope/current.json (
 ## Output
 - `.context/test-plan-scope.md` — danh sách test cần sinh/chạy theo scope
 - Cập nhật `.context/test-status.json` (specVersionCovered / scopeVersionCovered)
-- `.context/coverage.json` — board độ phủ của test (req → status/testRef/lastRunAt), tự cập nhật sau mỗi lần chạy
+- `.context/coverage.json` — tiến độ test theo req (req → status/testRef/lastRunAt), tự cập nhật sau mỗi lần chạy
 - `test-registry.json` — test mới/đổi vào **bộ test hoàn chỉnh** (TỰ ĐỘNG cuối luồng, kiểm tra trùng trước), không dựng suite riêng
-- **Tự quét độ phủ** `.context/coverage.json` ở cuối luồng (không gõ `/coverage`)
+- **Cập nhật tiến độ** `.context/coverage.json` + `.context/test-status.json` ở cuối luồng (không gõ `/coverage`)
+- **Spec chỉ đọc từ link** (`.spec-cache/`, read-only) — test không tạo gì thuộc spec
 
 ## Gate
 - [ ] Không bỏ sót direct/dependents (trừ khi ghi lý do)
 - [ ] `regression` được chạy lại
 - [ ] `acceptance` mỗi tiêu chí có test
 - [ ] test-status cập nhật đúng version
-- [ ] req `pending`/`untested` trong board độ phủ đều được xử lý
+- [ ] req `pending`/`untested` trong tiến độ test đều được xử lý
 - [ ] test mới/đổi đã ghi vào `test-registry.json` (bộ hoàn chỉnh)

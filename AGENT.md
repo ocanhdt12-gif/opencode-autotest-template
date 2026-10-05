@@ -13,8 +13,8 @@
 | 3 | Regression (retest luồng cũ) | `/regression` | test-scope + suite hiện có | regression + dependents |
 | 4 | Manual→Auto (case test tay) | `/capture-manual` | manual-cases/ | case tay → auto, add regression |
 | 5 | Theo test case user tạo | `/from-cases` | file case user | đúng case user |
-| — | Độ phủ | `/coverage` (chỉ xem) | `.context/coverage.json` — **tự quét** cuối mỗi luồng | req đã/chưa test |
-| — | Đăng ký + quét độ phủ ⭐ (tự động) | — (cuối mọi luồng tự chạy) | `test-registry.json` + board | test mới/đổi vào bộ hoàn chỉnh (kiểm tra trùng trước) + tự quét độ phủ |
+| — | Tiến độ test | `/coverage` (chỉ xem) | `.context/coverage.json` — **tự cập nhật** cuối mỗi luồng | req đã/chưa test |
+| — | Đăng ký + tiến độ ⭐ (tự động) | — (cuối mọi luồng tự chạy) | `test-registry.json` + board | test mới/đổi vào bộ hoàn chỉnh (kiểm tra trùng trước) + cập nhật tiến độ |
 
 ## Nhánh sinh test (bổ trợ)
 
@@ -47,7 +47,7 @@ TEST REFLECTOR — phân loại fail: bug-test / bug-code → sửa đúng chỗ
 VERIFY-TESTS — mutation + quality gate + hidden stash → PASS/FAIL
       │
       ▼
-📦 Đăng ký + quét độ phủ (TỰ ĐỘNG cuối mọi luồng) — kiểm tra trùng rồi ghi test mới/đổi vào test-registry.json + tự quét .context/coverage.json
+📦 Đăng ký + tiến độ (TỰ ĐỘNG cuối mọi luồng) — kiểm tra trùng rồi ghi test mới/đổi vào test-registry.json + cập nhật tiến độ .context/coverage.json + .context/test-status.json
       (mọi luồng đều kết thúc ở đây → luôn có 1 bộ test hoàn chỉnh để retest; KHÔNG cần gõ command, kể cả /coverage)
 ```
 
@@ -59,7 +59,8 @@ VERIFY-TESTS — mutation + quality gate + hidden stash → PASS/FAIL
 4. Manual→Auto / from-cases: test xanh, assert thật, không ép tự động hóa case cần người
 5. `verify-tests`: mutation score ≥ ngưỡng + quality gate + hidden stash
 6. Mọi fail → test-reflector phân loại → sửa đúng chỗ
-7. **Mọi luồng kết thúc bằng đăng ký + quét độ phủ TỰ ĐỘNG** (kiểm tra trùng → ghi `test-registry.json` + tự quét `.context/coverage.json`) — test mới/đổi phải vào bộ test hoàn chỉnh; không tạo suite song song; anh không cần gõ command
+7. **Mọi luồng kết thúc bằng đăng ký + cập nhật tiến độ TỰ ĐỘNG** (kiểm tra trùng → ghi `test-registry.json` + cập nhật `.context/coverage.json`/`.context/test-status.json`) — test mới/đổi phải vào bộ test hoàn chỉnh; không tạo suite song song; anh không cần gõ command
+8. **Spec chỉ ĐỌC từ link** (`.spec-cache/`, read-only) — test KHÔNG tạo/sinh/sửa spec; test chỉ giữ **tiến độ test** của chính nó
 
 ## Conventions
 

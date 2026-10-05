@@ -10,7 +10,7 @@
 - **mutation_score_floor:** 70 (ngưỡng mutation score mặc định)
 - **hidden_stash_dir:** tests/hidden (test ẩn chống overfit — không đưa vào prompt agent)
 - **test_registry:** test-registry.json (manifest BỘ TEST HOÀN CHỈNH — mọi luồng ghi vào TỰ ĐỘNG khi chạy xong, không cần command)
-- **coverage_board:** .context/coverage.json (board độ phủ — TỰ QUÉT cuối mỗi luồng test, không gõ /coverage)
+- **coverage_board:** .context/coverage.json (tiến độ test theo req — TỰ CẬP NHẬT cuối mỗi luồng test, không gõ /coverage; danh sách req đọc từ spec, KHÔNG tạo spec)
 - **source_roots:** ["src"]
 - **manual_cases_dir:** .context/manual-cases/
 - **package_manager:** npm | uv | pip — (trống)

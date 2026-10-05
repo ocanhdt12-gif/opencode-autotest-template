@@ -13,7 +13,7 @@
 3. Chạy test → **ĐỎ đúng cách** (fail vì chưa có code, không phải fail vì test sai)
 4. Báo user: implement code tới khi XANH
 5. Sau khi code xong: `/verify-tests`
-6. **Đăng ký + quét độ phủ TỰ ĐỘNG (cuối luồng)** — kiểm tra trùng rồi append test mới vào bộ test hoàn chỉnh + tự quét board độ phủ (`test-registry.json` + `.context/coverage.json`). Không cần gõ command.
+6. **Đăng ký + cập nhật tiến độ TỰ ĐỘNG (cuối luồng)** — kiểm tra trùng rồi append test mới vào bộ test hoàn chỉnh + cập nhật tiến độ test (`test-registry.json` + `.context/coverage.json` + `.context/test-status.json`). Không cần gõ command.
 
 ## Rule
 - Không đọc implementation khi viết test (file đã tồn tại → báo user, không tự sửa expected)

@@ -18,7 +18,7 @@ Compress conversation history khi context phình to. Giữ lại info quan trọ
 1. `.spec-cache/SPECIFICATIONS.md` — chỉ giữ feature list (top-level), không giữ full detail
 2. `.context/progress.json` — full, luôn luôn
 3. `test-registry.json` — manifest BỘ TEST HOÀN CHỈNH (mọi luồng ghi vào; không để mất)
-4. `.context/coverage.json` — board độ phủ (req → covered/failing), full
+4. `.context/coverage.json` — tiến độ test theo req (req → covered/failing), full
 5. `.context/test-notes.md` — chỉ giữ 5 entries gần nhất (nếu có)
 6. `.context/decisions.md` — full
 7. Current task file — full

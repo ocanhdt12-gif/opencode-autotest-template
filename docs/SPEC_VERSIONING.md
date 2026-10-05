@@ -1,6 +1,6 @@
 # Spec & Test-Scope Versioning (convention)
 
-> **DEV giữ spec** (cần test cái gì) + **test-scope** (phạm vi vừa đổi). **TEST tự giữ board độ phủ** (đã test đến đâu) — vì chỉ test mới biết nó đã chạy gì.
+> **DEV giữ spec** (cần test cái gì) + **test-scope** (phạm vi vừa đổi). **TEST tự giữ tiến độ test** (đã test đến đâu) — vì chỉ test mới biết nó đã chạy gì. **Spec chỉ đọc từ link git (read-only) — test KHÔNG tạo gì thuộc spec.**
 
 ## Cấu trúc thư mục
 
@@ -81,9 +81,9 @@ Template TEST ghi `.context/test-status.json`:
 
 **Quy tắc:** nếu `SPECIFICATIONS.md` (current version) **lớn hơn** `specVersionCovered` → test còn phần mới chưa cover → chạy luồng bổ sung.
 
-### Lớp 2 — coverage board (từng req đã/chưa test) 🎯 — **thuộc template TEST**
+### Lớp 2 — tiến độ theo từng req (đã/chưa test) 🎯 — **thuộc template TEST**
 
-Board độ phủ do **template TEST tự lưu** ở `.context/coverage.json` (repo TEST) — vì chỉ test mới biết nó đã chạy gì:
+Tiến độ test do **template TEST tự lưu** ở `.context/coverage.json` (repo TEST) — vì chỉ test mới biết nó đã chạy gì:
 ```jsonc
 {
   "specVersion": "1.5.0",
@@ -103,9 +103,9 @@ Board độ phủ do **template TEST tự lưu** ở `.context/coverage.json` (r
 | `failing` | Test fail |
 | `n/a` | Không cần test (có lý do) |
 
-**Danh sách req** lấy từ `.spec-cache/SPECIFICATIONS.md` (đọc qua link git). **Trạng thái** do TEST tự cập nhật sau mỗi lần chạy. DEV không giữ board này.
+**Danh sách req** lấy từ `.spec-cache/SPECIFICATIONS.md` (đọc qua link git). **Trạng thái** do TEST tự cập nhật sau mỗi lần chạy. DEV không giữ tiến độ này.
 
-`/coverage` (template TEST) đọc spec + board → liệt kê req chưa test → test → **tự cập nhật board**.
+`/coverage` (template TEST) đọc spec + tiến độ → liệt kê req chưa test → test → **tự cập nhật tiến độ**.
 
 ## Ai ghi gì
 
@@ -114,5 +114,5 @@ Board độ phủ do **template TEST tự lưu** ở `.context/coverage.json` (r
 | `SPECIFICATIONS.md` (version) | DEV (brainstorm/spec-validator) | mỗi lần đổi spec |
 | `spec/updates/*` + `CHANGELOG` | DEV | mỗi lần đổi spec |
 | `spec/test-scope/current.json` | **DEV** | sau mỗi bug-fix / feature-update |
-| `.context/coverage.json` (repo TEST) | **TEST** | sau mỗi lần chạy test (board độ phủ của test) |
+| `.context/coverage.json` (repo TEST) | **TEST** | sau mỗi lần chạy test (tiến độ test theo req) |
 | `.context/test-status.json` (repo TEST) | **TEST** | sau mỗi lần chạy test |

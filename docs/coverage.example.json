@@ -1,5 +1,5 @@
 {
-  "_comment": "Board độ phủ test — thuộc template TEST (repo test), KHÔNG nằm trong spec của dev. Khởi tạo bằng /coverage --init từ .spec-cache/SPECIFICATIONS.md.",
+  "_comment": "Tiến độ test theo req — thuộc template TEST (repo test), KHÔNG nằm trong spec của dev. Danh sách req lấy từ spec (.spec-cache/SPECIFICATIONS.md, đọc qua link git); trạng thái do test TỰ CẬP NHẬT cuối mỗi luồng (không gõ /coverage). Test KHÔNG tạo/sinh gì thuộc spec.",
   "specVersion": "1.5.0",
   "updatedAt": null,
   "requirements": [
