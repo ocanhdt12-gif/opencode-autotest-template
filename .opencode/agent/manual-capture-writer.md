@@ -24,7 +24,7 @@ Tự động hóa các case **đã được test tay và verify xong** — biế
 4. **Chạy → XANH** (vì case đã pass tay, test phải pass) — nếu ĐỎ: phân tích (test sai? hay code đã đổi từ sau lần test tay?) → xử lý qua test-reflector
 5. **Chống test vô hại:** assert phải bắt được behavior thật (không chỉ "chạy không crash"); nếu được, thử mutation nhanh
 6. **Đánh dấu case trong manual-cases**: `converted-to-auto` (kèm path test) hoặc `manual-only`
-7. **`/test-register manual`** — test mới vào **bộ test hoàn chỉnh** + `regression=true`
+7. **Đăng ký TỰ ĐỘNG (cuối luồng)** — kiểm tra trùng rồi append test mới vào **bộ test hoàn chỉnh** + `regression=true` (không cần command)
 
 ## Output
 - Test file mới (append vào bộ test hoàn chỉnh — không dựng suite riêng)

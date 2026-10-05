@@ -9,7 +9,7 @@
 - **mutation_tool:** mutmut (Python) · stryker (TS)
 - **mutation_score_floor:** 70 (ngưỡng mutation score mặc định)
 - **hidden_stash_dir:** tests/hidden (test ẩn chống overfit — không đưa vào prompt agent)
-- **test_registry:** test-registry.json (manifest BỘ TEST HOÀN CHỈNH — mọi luồng ghi vào qua /test-register)
+- **test_registry:** test-registry.json (manifest BỘ TEST HOÀN CHỈNH — mọi luồng ghi vào TỰ ĐỘNG khi chạy xong, không cần command)
 - **source_roots:** ["src"]
 - **manual_cases_dir:** .context/manual-cases/
 - **package_manager:** npm | uv | pip — (trống)

@@ -15,9 +15,9 @@ Tự động hóa các case **đã verify bằng tay** → lần sau chỉ chạ
    - ❌ Không (cần mắt người) → đánh dấu `manual-only` + lý do
 3. Chạy test → **XANH** (case đã pass tay). Nếu ĐỎ → test-reflector phân tích (test sai? code đã đổi?)
 4. Cập nhật `.context/manual-cases/<case>.md`: `converted-to-auto` / `manual-only`
-5. **`/test-register manual`** — test mới vào bộ hoàn chỉnh + `regression=true` (lần sau chạy chung suite)
+5. **Đăng ký TỰ ĐỘNG (cuối luồng)** — kiểm tra trùng rồi append test mới vào bộ hoàn chỉnh + `regression=true` (lần sau chạy chung suite). Không cần gõ command.
 
 ## Rule
 - Không ép tự động hóa case thật sự cần người (visual, cảm nhận) — ghi rõ lý do
 - Test phải assert thật, không chỉ "chạy không crash"
-- Test tự động hoá xong **add vào bộ test hoàn chỉnh** (không dựng suite riêng)
+- Test tự động hoá xong **add vào bộ test hoàn chỉnh** (không dựng suite riêng) — cuối luồng tự đăng ký, không cần command

@@ -16,7 +16,7 @@ Template OpenCode chuyên **sinh + duy trì Auto Test** — viết test từ spe
 | 4 | **Manual → Auto** | `/capture-manual` | Case đã test tay xong → chụp thành auto test |
 | 5 | **Theo case user** | `/from-cases` | User/khách đưa bộ test case → chuyển thành auto test |
 | — | **Độ phủ** | `/coverage` | Xem req nào đã/chưa test (board `.context/coverage.json` — do test tự lưu) |
-| — | **Đăng ký bộ test** ⭐ | `/test-register` | Sau MỌI luồng — ghi test mới/đổi vào `test-registry.json` + board (mọi luồng tự gọi) |
+| — | **Đăng ký bộ test** ⭐ (TỰ ĐỘNG) | — (không gõ) | Cuối MỌI luồng test tự chạy: kiểm tra trùng → ghi test mới/đổi vào `test-registry.json` + board |
 
 ## Quickstart
 
@@ -98,14 +98,12 @@ Golden test khóa behavior hiện tại (scrub timestamp/id/random) → mutation
 - Danh sách req lấy từ spec (qua link git); **trạng thái do test tự cập nhật** sau mỗi lần chạy
 - DEV không giữ board này
 
-### 9. ⭐ Đăng ký vào bộ test hoàn chỉnh (mọi luồng đều gọi)
-```bash
-/test-register
-```
-- Mọi luồng (full / test-scope / regression / manual / from-cases / characterize) **tự gọi bước này** sau khi chạy test
-- Ghi `test-registry.json` (root repo test): mỗi test 1 entry — `file` · `refs` (R-xx/case id) · `origin` (luồng nào sinh) · `regression` · `status` · `lastRunAt`
+### 9. ⭐ Đăng ký bộ test hoàn chỉnh — TỰ ĐỘNG (không cần gõ)
+- Mọi luồng (full / test-scope / regression / manual / from-cases / characterize) **tự chạy bước này khi kết thúc** — anh không phải gõ command nào
+- Kiểm tra trùng trước khi ghi: cùng `refs`+behavior → cập nhật; chưa có → append
+- Ghi `test-registry.json`: mỗi test 1 entry — `file` · `refs` (R-xx/case id) · `origin` (luồng nào sinh) · `regression` · `status` · `lastRunAt`
 - Cập nhật `.context/coverage.json` (req → `covered`/`failing` + `testRef`)
-- **Không tạo suite song song**: test mới append vào bộ hiện có; tra registry trước để **cập nhật** thay vì thêm bản sao
+- **Không tạo suite song song**: test mới append vào bộ hiện có
 - Kết quả: luôn có **1 bộ test hoàn chỉnh** để retest tính năng cũ + test feature mới
 
 ## Cấu trúc thư mục
@@ -124,7 +122,7 @@ Golden test khóa behavior hiện tại (scrub timestamp/id/random) → mutation
 │   └── generated/        ← inventory (auto-gen)
 ├── .opencode/
 │   ├── agent/            ← test-writer · characterization-writer · manual-capture-writer · scope-planner · spec-source-linker · test-reflector · test-validator
-│   └── command/          ← /autotest · /test-scope · /regression · /capture-manual · /from-cases · /characterize · /verify-tests · /spec-link · /coverage · /test-register
+│   └── command/          ← /autotest · /test-scope · /regression · /capture-manual · /from-cases · /characterize · /verify-tests · /spec-link · /coverage
 ├── .agent/               ← spec-validator · workflow
 ├── skills/               ← property-based-testing · mutation-testing · characterization-golden · manual-to-auto · test-quality-gate · coverage-driven · test-scope-contract · complete-test-suite
 └── scripts/              ← generate-inventory

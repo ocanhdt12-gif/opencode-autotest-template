@@ -14,7 +14,7 @@ Entry point mọi session. Phân loại intent rồi route.
 | "khóa behavior code cũ / refactor an toàn" | **`/characterize <path>`** — nhánh B |
 | "kiểm tra chất lượng test trước merge" | **`/verify-tests`** |
 | "đã test đến đâu / còn gì chưa test" | **`/coverage`** — board độ phủ `.context/coverage.json` (test tự lưu) |
-| "bổ sung vào bộ test hoàn chỉnh" (mọi luồng tự gọi) | **`/test-register`** — ghi test mới/đổi vào `test-registry.json` + board |
+| "bổ sung vào bộ test hoàn chỉnh" | **TỰ ĐỘNG** — cuối mọi luồng tự kiểm tra trùng rồi ghi `test-registry.json` + board (không gõ command) |
 | "test fail vì sao" | test-reflector phân loại → sửa test hoặc báo loop agent |
 | review/check | reviewer (nếu dự án có) |
 
@@ -29,6 +29,6 @@ Entry point mọi session. Phân loại intent rồi route.
 - Spec = link git tới `.spec-cache/` (KHÔNG lưu bản riêng — tránh lệch)
 - Mọi test → traceability về spec (`test-validator`) hoặc case user/manual
 - Test-scope là hợp đồng từ dev; thiếu → hỏi, không tự đoán rộng
-- ⭐ **1 bộ test hoàn chỉnh**: mọi luồng test đều bổ sung/cập nhật vào cùng bộ (`tests/` + `test-registry.json`) để retest cũ + test mới — không tạo suite song song; cuối mọi luồng gọi `/test-register`
+- ⭐ **1 bộ test hoàn chỉnh**: mọi luồng test đều bổ sung/cập nhật vào cùng bộ (`tests/` + `test-registry.json`) để retest cũ + test mới — không tạo suite song song; cuối mọi luồng **tự động** đăng ký (kiểm tra trùng trước), không cần command
 - Mọi fail → test-reflector phân loại → sửa đúng chỗ
 - Không merge nếu chưa `/verify-tests` pass

@@ -14,7 +14,7 @@
 | 4 | Manual→Auto (case test tay) | `/capture-manual` | manual-cases/ | case tay → auto, add regression |
 | 5 | Theo test case user tạo | `/from-cases` | file case user | đúng case user |
 | — | Độ phủ | `/coverage` | `.context/coverage.json` (test tự lưu) | req đã/chưa test |
-| — | Đăng ký bộ test ⭐ | `/test-register` | mọi luồng sau khi chạy | ghi `test-registry.json` + board (mọi luồng tự gọi) |
+| — | Đăng ký bộ test ⭐ (tự động) | — (cuối mọi luồng tự chạy) | `test-registry.json` + board | test mới/đổi vào bộ hoàn chỉnh (kiểm tra trùng trước) |
 
 ## Nhánh sinh test (bổ trợ)
 
@@ -47,8 +47,8 @@ TEST REFLECTOR — phân loại fail: bug-test / bug-code → sửa đúng chỗ
 VERIFY-TESTS — mutation + quality gate + hidden stash → PASS/FAIL
       │
       ▼
-📦 /test-register — ghi mọi test mới/đổi vào test-registry.json + .context/coverage.json
-      (MỌI luồng đều kết thúc ở đây → luôn có 1 bộ test hoàn chỉnh để retest)
+📦 Đăng ký (TỰ ĐỘNG cuối mọi luồng) — kiểm tra trùng rồi ghi test mới/đổi vào test-registry.json + .context/coverage.json
+      (mọi luồng đều kết thúc ở đây → luôn có 1 bộ test hoàn chỉnh để retest; KHÔNG cần gõ command)
 ```
 
 ## Gate bắt buộc
@@ -59,7 +59,7 @@ VERIFY-TESTS — mutation + quality gate + hidden stash → PASS/FAIL
 4. Manual→Auto / from-cases: test xanh, assert thật, không ép tự động hóa case cần người
 5. `verify-tests`: mutation score ≥ ngưỡng + quality gate + hidden stash
 6. Mọi fail → test-reflector phân loại → sửa đúng chỗ
-7. **Mọi luồng kết thúc bằng `/test-register`** — test mới/đổi phải vào bộ test hoàn chỉnh (`test-registry.json` + board); không tạo suite song song
+7. **Mọi luồng kết thúc bằng đăng ký TỰ ĐỘNG** (kiểm tra trùng → ghi `test-registry.json` + board) — test mới/đổi phải vào bộ test hoàn chỉnh; không tạo suite song song; anh không cần gõ command
 
 ## Conventions
 

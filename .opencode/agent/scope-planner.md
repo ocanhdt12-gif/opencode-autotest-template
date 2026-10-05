@@ -32,7 +32,7 @@ description: Scope planner — đọc .spec-cache/spec/test-scope/current.json (
 - `.context/test-plan-scope.md` — danh sách test cần sinh/chạy theo scope
 - Cập nhật `.context/test-status.json` (specVersionCovered / scopeVersionCovered)
 - `.context/coverage.json` — board độ phủ của test (req → status/testRef/lastRunAt), tự cập nhật sau mỗi lần chạy
-- `test-registry.json` — test mới/đổi vào **bộ test hoàn chỉnh** (`/test-register`), không dựng suite riêng
+- `test-registry.json` — test mới/đổi vào **bộ test hoàn chỉnh** (TỰ ĐỘNG cuối luồng, kiểm tra trùng trước), không dựng suite riêng
 
 ## Gate
 - [ ] Không bỏ sót direct/dependents (trừ khi ghi lý do)

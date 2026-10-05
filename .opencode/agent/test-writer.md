@@ -22,12 +22,12 @@ Sinh test suite từ `.spec-cache/SPECIFICATIONS.md` TRƯỚC khi code tồn t�
    - Không assert trivially (vd chỉ assert "không throw")
 6. **Chạy verify test ĐỎ** — test phải fail đúng cách (vì chưa có code/behavior chưa implement). Nếu test XANH ngay khi chưa code → test sai, sửa lại
 7. Bổ sung property-based test cho hàm có input đa dạng (xem `skills/property-based-testing`)
-8. Sau khi xong → **`/test-register`** ghi test vào bộ test hoàn chỉnh (tra registry trước để cập nhật thay vì thêm bản sao)
+8. Sau khi xong → **đăng ký TỰ ĐỘNG (cuối luồng)**: kiểm tra trùng rồi ghi test vào bộ test hoàn chỉnh (cùng `refs`+behavior → cập nhật, chưa có → append)
 
 ## Output
 - Test files (đặt theo convention repo: `tests/` hoặc cạnh code) — **append vào bộ test hoàn chỉnh**, không dựng suite riêng
 - `.context/test-plan.md` — mapping test ↔ requirement id (traceable)
-- Ghi test mới vào `test-registry.json` qua `/test-register` (origin=full/test-scope)
+- Ghi test mới vào `test-registry.json` (TỰ ĐỘNG cuối luồng, origin=full/test-scope)
 
 ## Gate
 - [ ] Mọi requirement R-xx có ≥1 test

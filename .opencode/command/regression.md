@@ -13,7 +13,7 @@
 2. Chạy lại các test **đã có** thuộc các luồng đó (không viết mới trừ khi thiếu)
 3. Nếu vỡ → `test-reflector` phân loại: bug-code (báo dev) / bug-test (sửa test)
 4. Cập nhật `.context/test-status.json`
-5. **`/test-register regression`** — cập nhật `status`/`lastRunAt` trong `test-registry.json` (không sinh test mới)
+5. **Đăng ký TỰ ĐỘNG (cuối luồng)** — cập nhật `status`/`lastRunAt` trong `test-registry.json` (không sinh test mới, không cần command)
 6. Báo cáo: luồng nào còn xanh, luồng nào vỡ + nguyên nhân
 
 ## Rule
