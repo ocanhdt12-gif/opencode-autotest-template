@@ -19,7 +19,7 @@ Entry point mọi session. Phân loại intent rồi route.
 ## Mặc định khi session bắt đầu
 1. Đọc `SPECIFICATIONS.md` — nguồn truth
 2. Chạy test suite hiện tại xem pass không (`npm test` / `pytest`)
-3. Check `.context/test-scope.json` — có scope mới từ dev không? (nếu có → gợi ý `/test-scope`)
+3. Check `spec/test-scope/current.json` — có scope mới từ dev không? (so version với `.context/test-status.json`)
 4. Check `.context/manual-cases/` — case manual chưa chuyển auto
 
 ## Quy tắc nền

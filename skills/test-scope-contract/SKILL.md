@@ -1,42 +1,52 @@
 ---
 name: test-scope-contract
-description: "Hợp đồng bàn giao test-scope.json giữa template DEV (sinh sau khi sửa code) và template AUTOTEST (đọc để biết cần test gì). Định nghĩa format + producer/consumer. Dùng khi /test-scope, /regression, hoặc khi cần biết phạm vi test sau một thay đổi."
+description: "Hợp đồng bàn giao test-scope (spec/test-scope/current.json) giữa template DEV (sinh sau khi sửa code) và template AUTOTEST (đọc để biết cần test gì) — có specVersion + scopeVersion để test biết đang cover đến đâu. Dùng khi /test-scope, /regression, hoặc cần biết phạm vi test sau thay đổi."
 ---
 
-# Test Scope Contract (DEV ⇄ AUTOTEST)
+# Test Scope Contract (DEV ⇄ AUTOTEST) — versioned
 
-Hợp đồng để template DEV báo cho template AUTOTEST **cần test cái gì** sau mỗi thay đổi — anh không phải tự mò.
+Hợp đồng để template DEV báo cho template AUTOTEST **cần test cái gì** sau mỗi thay đổi — có version để test biết đang cover đến đâu.
 
 ## Ai sinh, ai dùng
 
-| Vai | Ai | Khi nào |
-|---|---|---|
-| **Producer** | template DEV (`builder`, sau bug fix / feature) | cuối mỗi lần sửa code → ghi `.context/test-scope.json` |
-| **Consumer** | template AUTOTEST (`scope-planner` + commands) | `/test-scope`, `/regression` |
+| Vai | Ai | Khi nào | Ghi vào |
+|---|---|---|---|
+| **Producer** | template DEV (`builder`, sau bug fix / feature) | cuối mỗi lần sửa | `spec/test-scope/current.json` |
+| **Consumer** | template AUTOTEST (`scope-planner` + commands) | `/test-scope`, `/regression` | đọc file trên + ghi `.context/test-status.json` |
 
-## Format (bắt buộc — 2 template thống nhất)
+## Vị trí & schema
 
-Xem `docs/FLOWS.md`. Tóm tắt field quan trọng:
-- `trigger`: `initial-build | bug-fix | feature-update`
-- `specRefs`: requirement R-xx liên quan (traceability về spec)
-- `changed.files` / `changed.modules`
-- `impact.direct` — hành vi đổi trực tiếp → **test mới/sửa**
-- `impact.dependents` — phụ thuộc có thể vỡ → **test lại**
-- `impact.regression` — luồng cũ cần retest
-- `acceptance` — tiêu chí nghiệm thu (test phải cover)
-- `risk` — quyết định độ sâu test
+Xem `docs/SPEC_VERSIONING.md` + `docs/FLOWS.md`. Điểm quan trọng:
+- File scope: **`spec/test-scope/current.json`** (KHÔNG phải `.context/test-scope.json`)
+- Có **`specVersion`** (bám `SPECIFICATIONS.md` version) + **`scopeVersion`** (lần sinh thứ mấy)
+- Archive: `spec/test-scope/archive/test-scope-<specVersion>-<scopeVersion>.json`
+
+## Test biết "cần test đến đâu"
+
+Template TEST ghi `.context/test-status.json`:
+```jsonc
+{
+  "specVersionCovered": "1.2.0",
+  "scopeVersionCovered": 3,
+  "lastRun": "...",
+  "pendingSpecVersion": null
+}
+```
+**Quy tắc:** `SPECIFICATIONS.md` version > `specVersionCovered` → còn phần spec mới chưa cover → chạy `/test-scope` (nếu có scope) hoặc `/autotest --full` (mốc lớn).
 
 ## Cách AUTOTEST dùng
 
-1. `/test-scope`: test `direct` + `dependents` + `acceptance` (không test cả repo)
+1. `/test-scope`: đọc `spec/test-scope/current.json` → test `direct` + `dependents` + `acceptance`
 2. `/regression`: chạy lại test đã có cho `regression` + `dependents`
 3. `risk: high` → bắt buộc mutation verify + mở rộng phạm vi; `low` → scope hẹp
+4. Sau khi xong → cập nhật `.context/test-status.json`
 
-## Nếu thiếu test-scope.json
-- Không có file → hỏi: "chạy full hay chỉ ranh giới module X?" (không tự đoán rộng)
-- File cũ (quá 1 workItem) → cảnh báo stale, đề nghị dev sinh lại
+## Nếu thiếu / stale
+- Không có file → hỏi: "chạy full hay chỉ module X?" (không tự đoán rộng)
+- `scopeVersion` đã cover (trong test-status) → không test lại, báo đã cover
+- File cũ hơn spec version → cảnh báo stale, đề nghị dev sinh lại
 
 ## Validate
-- `specRefs` phải tồn tại trong `SPECIFICATIONS.md` (nếu không → cảnh báo lệch spec)
+- `specRefs` phải tồn tại trong `SPECIFICATIONS.md`
 - `changed.files` phải là file thật trong repo
-- Thiếu `acceptance` → nhắc dev bổ sung (tiêu chí test)
+- Thiếu `acceptance` → nhắc dev bổ sung

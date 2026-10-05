@@ -2,14 +2,14 @@
 
 Template OpenCode chuyên **sinh + duy trì Auto Test** — viết test từ spec trước khi code, khóa behavior legacy, chụp test manual, và test theo case user tạo.
 
-> **Match với template dev:** chỉ **SPEC là cái chung** — cả 2 template cùng dùng `SPECIFICATIONS.md`. Template DEV sinh `.context/test-scope.json` sau mỗi lần sửa → template này đọc để biết cần test gì (không tự mò).
+> **Match với template dev:** chỉ **SPEC là cái chung** — cả 2 template cùng dùng `SPECIFICATIONS.md` (có version). Template DEV sinh `spec/test-scope/current.json` (kèm `specVersion`+`scopeVersion`) sau mỗi lần sửa → template này đọc để biết cần test gì, và ghi `.context/test-status.json` để biết đã cover đến đâu. Chi tiết: `docs/SPEC_VERSIONING.md`.
 
 ## 5 luồng test (chi tiết: `docs/FLOWS.md`)
 
 | # | Luồng | Command | Khi nào |
 |---|---|---|---|
 | 1 | **Full lần đầu** | `/autotest --full` | Code xong lần đầu từ template dev → test toàn bộ spec |
-| 2 | **Phần vừa sửa** 🔑 | `/test-scope` | Vừa fix bug / thêm feature → test đúng phạm vi (đọc `test-scope.json` từ dev) |
+| 2 | **Phần vừa sửa** 🔑 | `/test-scope` | Vừa fix bug / thêm feature → test đúng phạm vi (đọc `spec/test-scope/current.json` từ dev) |
 | 3 | **Regression** | `/regression` | Sau update → retest luồng cũ, đảm bảo không vỡ |
 | 4 | **Manual → Auto** | `/capture-manual` | Case đã test tay xong → chụp thành auto test |
 | 5 | **Theo case user** | `/from-cases` | User/khách đưa bộ test case → chuyển thành auto test |
@@ -39,11 +39,13 @@ npx opencode
 ```bash
 /test-scope
 ```
-- Đọc `.context/test-scope.json` (template DEV sinh) → `scope-planner` phân loại:
+- Đọc `spec/test-scope/current.json` (template DEV sinh, có `specVersion`+`scopeVersion`) → `scope-planner` phân loại:
   - `impact.direct` → sinh test mới
   - `impact.dependents` → test lại
   - `acceptance` → đảm bảo có test
+- Đối chiếu version: spec hiện tại > `specVersionCovered` → còn phần mới chưa cover
 - `risk: high` → mutation verify bắt buộc
+- Xong → cập nhật `.context/test-status.json`
 
 ### 3. Luồng 3 — Regression
 ```bash
@@ -85,8 +87,12 @@ Golden test khóa behavior hiện tại (scrub timestamp/id/random) → mutation
 ├── SPECIFICATIONS.md     ← spec chung (code + test)
 ├── BRIEF.md
 ├── opencode.jsonc
+├── spec/                 ← quản lý spec + test-scope theo version (xem docs/SPEC_VERSIONING.md)
+│   ├── CHANGELOG.md · updates/ · archive/
+│   └── test-scope/       ← current.json (dev sinh) · archive/
 ├── docs/
 │   ├── FLOWS.md          ← 5 luồng + hợp đồng test-scope
+│   ├── SPEC_VERSIONING.md ← version spec + test-scope
 │   └── generated/        ← inventory (auto-gen)
 ├── .opencode/
 │   ├── agent/            ← test-writer · characterization-writer · manual-capture-writer · scope-planner · test-reflector · test-validator
@@ -102,6 +108,6 @@ Golden test khóa behavior hiện tại (scrub timestamp/id/random) → mutation
 2. **Test PHẢI có khả năng bất đồng với code** — mutation score là thước đo, không phải coverage %
 3. **Characterization = khóa behavior hiện tại, không phải "đúng"**
 4. **Manual case → auto test ngay khi có thể** — chỉ giữ manual-only khi thật cần
-5. **Test-scope.json là hợp đồng từ dev** — đọc để test đúng phạm vi, thiếu thì hỏi, không tự đoán rộng
+5. **Test-scope.json có version** — đọc để test đúng phạm vi + biết đã cover đến đâu; thiếu thì hỏi, không tự đoán rộng
 6. **Test sinh bởi AI phải qua gate** — không merge test chưa qua `/verify-tests`
 7. **Luồng 4/5 tự add vào regression** — mọi test mới trở thành lưới an toàn cho lần sau

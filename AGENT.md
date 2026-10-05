@@ -7,7 +7,7 @@
 | # | Luồng | Command | Đọc gì | Test gì |
 |---|---|---|---|---|
 | 1 | Full lần đầu (code mới từ template dev) | `/autotest --full` | SPECIFICATIONS.md | toàn bộ R-xx |
-| 2 | Phần vừa sửa (bug/feature) 🔑 | `/test-scope` | `.context/test-scope.json` | direct + dependents + acceptance |
+| 2 | Phần vừa sửa (bug/feature) 🔑 | `/test-scope` | `spec/test-scope/current.json` | direct + dependents + acceptance |
 | 3 | Regression (retest luồng cũ) | `/regression` | test-scope + suite hiện có | regression + dependents |
 | 4 | Manual→Auto (case test tay) | `/capture-manual` | manual-cases/ | case tay → auto, add regression |
 | 5 | Theo test case user tạo | `/from-cases` | file case user | đúng case user |
@@ -22,7 +22,7 @@
 
 ## Hợp đồng bàn giao
 
-Template DEV sinh `.context/test-scope.json` sau mỗi sửa (xem `skills/test-scope-contract`) → template AUTOTEST (`scope-planner`) đọc để biết cần test gì. **Anh không phải tự check.**
+Template DEV sinh `spec/test-scope/current.json` (có `specVersion`+`scopeVersion`) sau mỗi sửa (xem `skills/test-scope-contract` + `docs/SPEC_VERSIONING.md`) → template AUTOTEST (`scope-planner`) đọc để biết cần test gì, ghi `.context/test-status.json` để theo dõi version đã cover.
 
 ## Pipeline
 

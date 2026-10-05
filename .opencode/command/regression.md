@@ -4,16 +4,17 @@
 
 ## Cách dùng
 ```
-/regression                  → đọc impact.regression + dependents trong .context/test-scope.json
+/regression                  → đọc impact.regression + dependents trong spec/test-scope/current.json
 /regression --all            → chạy lại TOÀN BỘ test đã có (an toàn, chậm hơn)
 ```
 
 ## Flow
-1. Đọc `test-scope.json` → lấy `impact.regression` + `impact.dependents`
+1. Đọc `spec/test-scope/current.json` → lấy `impact.regression` + `impact.dependents`
 2. Chạy lại các test **đã có** thuộc các luồng đó (không viết mới trừ khi thiếu)
 3. Nếu vỡ → `test-reflector` phân loại: bug-code (báo dev) / bug-test (sửa test)
-4. Báo cáo: luồng nào còn xanh, luồng nào vỡ + nguyên nhân
+4. Cập nhật `.context/test-status.json`
+5. Báo cáo: luồng nào còn xanh, luồng nào vỡ + nguyên nhân
 
 ## Rule
 - Regression = chạy test **đã tồn tại**, không phải sinh mới
-- Test suite này là "lưới an toàn" — luôn cập nhật khi thêm test mới (luồng 4, 5 tự add vào đây)
+- Bộ regression tự lớn lên: luồng 4 (manual→auto) + luồng 5 (from-cases) tự add test mới vào đây
