@@ -1,0 +1,46 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // ─────────────────────────────────────────────────────────────
+  // Autotest template — permission gate
+  // Test-writer/refactor chỉ đọc spec khi cần; bash giới hạn như template dev
+  // ─────────────────────────────────────────────────────────────
+  "skills": {
+    "paths": ["./skills"]
+  },
+
+  "permission": {
+    "doom_loop": "allow",
+
+    "task": {
+      "*": "allow",
+      "builder-strong": "ask"
+    },
+
+    "bash": {
+      "*": "allow",
+      "git push": "deny",
+      "git push origin *": "allow",
+      "git push origin": "deny",
+      "git push --all*": "deny",
+      "git push --mirror*": "deny",
+      "git push* main*": "deny",
+      "git push* main": "deny",
+      "git push --force*": "deny",
+      "git push*--force*": "deny",
+      "git push -f*": "deny",
+      "git reset --hard*": "deny",
+      "rm -rf*": "ask"
+    },
+
+    // Test framework chạy tự do (cần thiết cho workflow autotest)
+    "npm test*": "allow",
+    "pytest*": "allow",
+    "uv run pytest*": "allow",
+    "npx vitest*": "allow",
+    "npx stryker*": "allow",
+    "mutmut*": "allow"
+  },
+
+  "model": "auto"
+}
