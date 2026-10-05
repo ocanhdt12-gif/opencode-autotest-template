@@ -13,14 +13,15 @@ Entry point mọi session. Phân loại intent rồi route.
 | "test theo case anh/khách đưa" | **`/from-cases`** — luồng 5 |
 | "khóa behavior code cũ / refactor an toàn" | **`/characterize <path>`** — nhánh B |
 | "kiểm tra chất lượng test trước merge" | **`/verify-tests`** |
+| "đã test đến đâu / còn gì chưa test" | **`/coverage`** — xem board độ phủ `.spec-cache/spec/coverage.json` |
 | "test fail vì sao" | test-reflector phân loại → sửa test hoặc báo loop agent |
 | review/check | reviewer (nếu dự án có) |
 
 ## Mặc định khi session bắt đầu
 1. `/spec-link --sync` — pull spec mới nhất về `.spec-cache/` (nếu chưa link → hỏi link)
 2. Đọc `.spec-cache/SPECIFICATIONS.md` — nguồn truth
-3. Chạy test suite hiện tại xem pass không (`npm test` / `pytest`)
-4. Check `.spec-cache/spec/test-scope/current.json` — có scope mới từ dev không? (so version với `.context/test-status.json`)
+3. Đọc `.spec-cache/spec/coverage.json` + `.spec-cache/spec/test-scope/current.json` — req nào đã/chưa test, scope mới từ dev?
+4. Chạy test suite hiện tại xem pass không (`npm test` / `pytest`)
 5. Check `.context/manual-cases/` — case manual chưa chuyển auto
 
 ## Quy tắc nền

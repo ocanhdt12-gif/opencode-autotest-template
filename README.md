@@ -13,6 +13,7 @@ Template OpenCode chuyên **sinh + duy trì Auto Test** — viết test từ spe
 | 3 | **Regression** | `/regression` | Sau update → retest luồng cũ, đảm bảo không vỡ |
 | 4 | **Manual → Auto** | `/capture-manual` | Case đã test tay xong → chụp thành auto test |
 | 5 | **Theo case user** | `/from-cases` | User/khách đưa bộ test case → chuyển thành auto test |
+| — | **Độ phủ** | `/coverage` | Xem req nào đã/chưa test (board `spec/coverage.json` từ dev) |
 
 ## Quickstart
 
@@ -84,6 +85,15 @@ Golden test khóa behavior hiện tại (scrub timestamp/id/random) → mutation
 - Quality gate — chống expected-từ-code, try-catch nuốt lỗi, assert trivially
 - Hidden stash — test ẩn chạy CI, chống overfit
 
+### 8. Độ phủ test (biết đã/chưa test đến đâu)
+```bash
+/coverage            # xem board: req nào covered/pending/untested/failing
+/coverage --gaps     # chỉ phần CHƯA test
+/coverage --report   # xuất .context/coverage-report.json báo về dev
+```
+- Đọc `.spec-cache/spec/coverage.json` (board của dev) → req `pending`/`untested` → cần test; `covered` → bỏ qua
+- Sau khi test → xuất report để dev cập nhật board
+
 ## Cấu trúc thư mục
 
 ```
@@ -99,7 +109,7 @@ Golden test khóa behavior hiện tại (scrub timestamp/id/random) → mutation
 │   └── generated/        ← inventory (auto-gen)
 ├── .opencode/
 │   ├── agent/            ← test-writer · characterization-writer · manual-capture-writer · scope-planner · spec-source-linker · test-reflector · test-validator
-│   └── command/          ← /autotest · /test-scope · /regression · /capture-manual · /from-cases · /characterize · /verify-tests · /spec-link
+│   └── command/          ← /autotest · /test-scope · /regression · /capture-manual · /from-cases · /characterize · /verify-tests · /spec-link · /coverage
 ├── .agent/               ← spec-validator · workflow
 ├── skills/               ← property-based-testing · mutation-testing · characterization-golden · manual-to-auto · test-quality-gate · coverage-driven · test-scope-contract
 └── scripts/              ← generate-inventory

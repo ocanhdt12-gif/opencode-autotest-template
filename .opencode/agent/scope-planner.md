@@ -8,6 +8,7 @@ description: Scope planner — đọc .spec-cache/spec/test-scope/current.json (
 
 ## Input
 - `.spec-cache/spec/test-scope/current.json` — hợp đồng (xem `skills/test-scope-contract`, schema `docs/SPEC_VERSIONING.md`)
+- `.spec-cache/spec/coverage.json` — **board độ phủ** (req đã/chưa test) do dev set
 - `.spec-cache/SPECIFICATIONS.md` — để verify `specRefs` + so version
 - `.context/test-status.json` — đã cover đến specVersion/scopeVersion nào
 - Test suite hiện có (`tests/`)
@@ -30,9 +31,11 @@ description: Scope planner — đọc .spec-cache/spec/test-scope/current.json (
 ## Output
 - `.context/test-plan-scope.md` — danh sách test cần sinh/chạy theo scope
 - Cập nhật `.context/test-status.json` (specVersionCovered / scopeVersionCovered)
+- `.context/coverage-report.json` — báo độ phủ về dev (req → status/testRef/lastRunAt)
 
 ## Gate
 - [ ] Không bỏ sót direct/dependents (trừ khi ghi lý do)
 - [ ] `regression` được chạy lại
 - [ ] `acceptance` mỗi tiêu chí có test
 - [ ] test-status cập nhật đúng version
+- [ ] req `pending`/`untested` trong coverage board đều được xử lý

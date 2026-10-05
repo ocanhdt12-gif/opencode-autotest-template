@@ -11,6 +11,7 @@
 | 3 | Regression (retest luồng cũ) | `/regression` | test-scope + suite hiện có | regression + dependents |
 | 4 | Manual→Auto (case test tay) | `/capture-manual` | manual-cases/ | case tay → auto, add regression |
 | 5 | Theo test case user tạo | `/from-cases` | file case user | đúng case user |
+| — | Độ phủ | `/coverage` | `.spec-cache/spec/coverage.json` | req đã/chưa test |
 
 ## Nhánh sinh test (bổ trợ)
 
