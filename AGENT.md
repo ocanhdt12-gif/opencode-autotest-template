@@ -1,14 +1,28 @@
 # AGENT.md — Autotest Generation Pipeline
 
-> Template xử lý bài toán: **sinh + duy trì auto test** cho code mới (test-first), legacy (characterization), và sau manual test (capture). Match với template dev: **chỉ spec là cái chung** (`SPECIFICATIONS.md`).
+> Template xử lý bài toán: **sinh + duy trì auto test**. Match với template dev: **chỉ spec là cái chung** (`SPECIFICATIONS.md`).
 
-## 3 Nhánh core
+## 5 luồng test (xem chi tiết `docs/FLOWS.md`)
 
-| Nhánh | Input | Output | Agent chính |
+| # | Luồng | Command | Đọc gì | Test gì |
+|---|---|---|---|---|
+| 1 | Full lần đầu (code mới từ template dev) | `/autotest --full` | SPECIFICATIONS.md | toàn bộ R-xx |
+| 2 | Phần vừa sửa (bug/feature) 🔑 | `/test-scope` | `.context/test-scope.json` | direct + dependents + acceptance |
+| 3 | Regression (retest luồng cũ) | `/regression` | test-scope + suite hiện có | regression + dependents |
+| 4 | Manual→Auto (case test tay) | `/capture-manual` | manual-cases/ | case tay → auto, add regression |
+| 5 | Theo test case user tạo | `/from-cases` | file case user | đúng case user |
+
+## Nhánh sinh test (bổ trợ)
+
+| Nhánh | Input | Output | Agent |
 |---|---|---|---|
-| A. Test-first | `SPECIFICATIONS.md` + layer/task | Test suite trước code (red → green) | `test-writer` → `test-reflector` |
-| B. Characterization | File/module legacy chưa test | Golden/snapshot test khóa behavior | `characterization-writer` → `test-reflector` |
-| C. Manual→Auto | Mô tả case đã test tay | Auto test regression (hoặc đánh dấu manual-only) | `manual-capture-writer` → `test-reflector` |
+| A. Test-first | `SPECIFICATIONS.md` + task | test trước code (red → green) | `test-writer` → `test-reflector` |
+| B. Characterization | Legacy chưa test | golden test khóa behavior | `characterization-writer` → `test-reflector` |
+| C. Manual→Auto | Case đã test tay | auto test + add regression | `manual-capture-writer` → `test-reflector` |
+
+## Hợp đồng bàn giao
+
+Template DEV sinh `.context/test-scope.json` sau mỗi sửa (xem `skills/test-scope-contract`) → template AUTOTEST (`scope-planner`) đọc để biết cần test gì. **Anh không phải tự check.**
 
 ## Pipeline
 
@@ -16,33 +30,34 @@
 SPECIFICATIONS.md (chung với template dev)
       │  spec-validator PASS
       ▼
-TEST PLANNER → test plan traceable (mỗi test → requirement id)
+Luồng 1 (full) / Luồng 2 (test-scope.json từ dev) / Luồng 3 (regression)
       │
-      ├── Nhánh A: test-writer (SPEC → test, ko đọc impl) → chạy ĐỎ
-      ├── Nhánh B: characterization-writer (code → golden, scrub unstable) → mutation verify
-      └── Nhánh C: manual-capture-writer (case manual → auto test)
-      │
-      ▼
-TEST REFLECTOR — chạy + phân loại fail: bug-test / bug-code → sửa đúng chỗ
+      ├── Nhánh A: test-writer → chạy ĐỎ
+      ├── Nhánh B: characterization-writer → mutation verify
+      ├── Nhánh C: manual-capture-writer (luồng 4) · from-cases (luồng 5)
       │
       ▼
-VERIFY-TESTS — mutation testing + quality gate + hidden stash → PASS/FAIL
+TEST REFLECTOR — phân loại fail: bug-test / bug-code → sửa đúng chỗ
+      │
+      ▼
+VERIFY-TESTS — mutation + quality gate + hidden stash → PASS/FAIL
 ```
 
 ## Gate bắt buộc
 
-1. `spec-validator` PASS trước khi sinh test (match spec-validator của template dev)
-2. Test-first: test **ĐỎ đúng cách** trước khi code (không red là test sai)
-3. Characterization: **mutation check bắt được** (test vô nghĩa nếu phá code mà test không fail)
-4. Manual→Auto: case tự động hóa được phải **xanh khi chạy**; không ép manual-only
-5. `verify-tests`: mutation score ≥ ngưỡng + quality gate + hidden stash — trước khi merge
+1. `spec-validator` PASS trước khi sinh test
+2. Test-first: test **ĐỎ đúng cách** trước khi code
+3. Characterization: **mutation check bắt được**
+4. Manual→Auto / from-cases: test xanh, assert thật, không ép tự động hóa case cần người
+5. `verify-tests`: mutation score ≥ ngưỡng + quality gate + hidden stash
 6. Mọi fail → test-reflector phân loại → sửa đúng chỗ
 
 ## Conventions
 
-- Test file: `tests/` hoặc cạnh code (theo framework repo); test case gắn `R-xx` từ spec
-- Test name phản ánh hành vi, không phải implementation
-- Không `try-catch` nuốt lỗi trong test; không assert trivially
-- Scrub unstable fields trong golden test (timestamp, id, random)
-- Ghi `manual-only` case kèm lý do — không tự động hóa bằng mọi giá
-- Mỗi slice 1 commit, review được
+- Test file trong `tests/` hoặc cạnh code; test gắn `R-xx` (spec) hoặc case id (user/manual)
+- Test name phản ánh hành vi, không implementation
+- Không try-catch nuốt lỗi; không assert trivially
+- Scrub unstable fields trong golden test
+- `manual-only` case ghi rõ lý do
+- Luồng 4/5: test tự động hoá xong **phải add vào regression suite** (luồng 3)
+- Mỗi slice 1 commit

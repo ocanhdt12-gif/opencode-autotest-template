@@ -3,7 +3,7 @@
 > ⚠️ AUTO-GENERATED — **không sửa tay**. Chạy lại:
 > `npm docs:inventory` hoặc `node scripts/generate-inventory.mjs`.
 
-- Git: `7ab196b`
+- Git: `ac5a076`
 - Source roots: `src`
 - Total files: 0
 

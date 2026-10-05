@@ -1,13 +1,18 @@
 # opencode-autotest-template
 
-Template OpenCode chuyên **sinh + duy trì Auto Test** cho AI agent — viết test từ spec trước khi code, khóa behavior legacy, và chụp test manual thành regression test.
+Template OpenCode chuyên **sinh + duy trì Auto Test** — viết test từ spec trước khi code, khóa behavior legacy, chụp test manual, và test theo case user tạo.
 
-> **3 nhánh hoạt động:**
-> - **A. Test-first generation** — code MỚI: spec → viết test TRƯỚC → verify ĐỎ → code → XANH
-> - **B. Characterization** — legacy CHƯA có test: khóa behavior hiện tại bằng golden test → an toàn sửa/refactor
-> - **C. Manual→Auto capture** — case đã test TAY xong: chụp thành auto test → lần sau chỉ chạy lại
->
-> **Match với template dev:** chỉ **SPEC là cái chung** — cả 2 template cùng dùng `SPECIFICATIONS.md` (format giống nhau); test và code cùng bám spec. Error handling mỗi template tự quản lý, không cầu nối.
+> **Match với template dev:** chỉ **SPEC là cái chung** — cả 2 template cùng dùng `SPECIFICATIONS.md`. Template DEV sinh `.context/test-scope.json` sau mỗi lần sửa → template này đọc để biết cần test gì (không tự mò).
+
+## 5 luồng test (chi tiết: `docs/FLOWS.md`)
+
+| # | Luồng | Command | Khi nào |
+|---|---|---|---|
+| 1 | **Full lần đầu** | `/autotest --full` | Code xong lần đầu từ template dev → test toàn bộ spec |
+| 2 | **Phần vừa sửa** 🔑 | `/test-scope` | Vừa fix bug / thêm feature → test đúng phạm vi (đọc `test-scope.json` từ dev) |
+| 3 | **Regression** | `/regression` | Sau update → retest luồng cũ, đảm bảo không vỡ |
+| 4 | **Manual → Auto** | `/capture-manual` | Case đã test tay xong → chụp thành auto test |
+| 5 | **Theo case user** | `/from-cases` | User/khách đưa bộ test case → chuyển thành auto test |
 
 ## Quickstart
 
@@ -19,74 +24,84 @@ npx opencode
 
 ## Step-by-step
 
-### 1. Nạp Spec (dùng chung với template dev)
-- Đặt `SPECIFICATIONS.md` vào repo (hoặc `BRIEF.md` → brainstorm sinh spec)
-- Chạy spec-validator → đảm bảo spec PASS trước khi sinh test
-- Mỗi requirement trong spec có **id** (vd `R-01`) — test traceable về spec
+### 0. Nạp Spec (dùng chung với template dev)
+- Đặt `SPECIFICATIONS.md` (hoặc `BRIEF.md` → brainstorm sinh spec)
+- Chạy spec-validator → spec PASS trước khi sinh test
+- Mỗi requirement có **id** (`R-01`) — test traceable
 
-### 2. Nhánh A — Sinh test từ spec (code mới)
+### 1. Luồng 1 — Full test lần đầu
 ```bash
-/autotest <layer-or-module>
+/autotest --full
 ```
-1. `test-writer` đọc spec → viết test trước (unit + property-based), KHÔNG đọc implementation
-2. Chạy test → phải **ĐỎ** (đúng cách — failing vì chưa có code)
-3. (Đưa sang) code implement tới khi test **XANH**
-4. `/verify-tests` — mutation + quality gate chặn test "vô hại"
+`test-writer` sinh test cho **mọi** `R-xx` → chạy **ĐỎ** → (code) → **XANH** → `/verify-tests`
 
-### 3. Nhánh B — Characterization (legacy chưa test)
+### 2. Luồng 2 — Test phần vừa sửa 🔑
 ```bash
-/characterize <path-to-file-or-module>
+/test-scope
 ```
-1. `characterization-writer` đọc code → sinh **golden/snapshot test** khóa behavior hiện tại
-2. Scrub trường unstable (timestamp, id, random)
-3. **Mutation check** — cố tình phá code → test PHẢI bắt được (nếu không, test vô nghĩa)
-4. Xong → an toàn để sửa/refactor
+- Đọc `.context/test-scope.json` (template DEV sinh) → `scope-planner` phân loại:
+  - `impact.direct` → sinh test mới
+  - `impact.dependents` → test lại
+  - `acceptance` → đảm bảo có test
+- `risk: high` → mutation verify bắt buộc
 
-### 4. Nhánh C — Manual→Auto capture (chụp test đã test tay)
+### 3. Luồng 3 — Regression
 ```bash
-/capture-manual <case-id-or-path>
+/regression
 ```
-Khi bạn/test manual đã verify 1 case xong, chụp lại thành auto test:
-1. Mô tả case (input / expected / bước kiểm tra) vào `.context/manual-cases/`
-2. Agent viết test tự động hóa đúng case đó (dùng test framework của repo)
-3. Chạy → xanh → lưu vào `tests/` → từ nay chạy `npm test`/`pytest` là biết case đó còn pass không
-4. Case nào **không tự động hóa được** (cần người xác nhận, visual...) → đánh dấu `manual-only` + lý do, không ép
+Chạy lại test **đã có** thuộc `impact.regression` + dependents → xác nhận luồng cũ không vỡ.
 
-### 5. Verify chất lượng test
+### 4. Luồng 4 — Manual → Auto
+```bash
+/capture-manual <case-id>
+```
+Test tay xong → sinh auto test → XANH → **add vào regression suite**. Không tự động hoá được → `manual-only` + lý do.
+
+### 5. Luồng 5 — Test theo case user
+```bash
+/from-cases <path>
+```
+Đọc file test case user (md/csv/sheet) → chuyển từng case thành auto test → báo pass/fail/không tự động hoá được. Bám đúng case user, không tự bịa.
+
+### 6. Nhánh bổ trợ — Characterization (legacy chưa test)
+```bash
+/characterize <path>
+```
+Golden test khóa behavior hiện tại (scrub timestamp/id/random) → mutation verify → an toàn refactor.
+
+### 7. Verify chất lượng test
 ```bash
 /verify-tests
 ```
-- Chạy toàn bộ test suite
-- **Mutation testing** (mutmut / Stryker) — mutation score = test có bắt bug thật không
-- **Quality gate** — chống: expected lấy từ chạy code, try-catch nuốt lỗi, assert trivially pass
-- **Hidden stash** — test ẩn (không nằm trong prompt agent) chạy trong CI, chống agent overfit
-
-### 6. Vòng lặp lỗi test
-- Test fail → `test-reflector` phân loại: bug trong TEST (sửa test) / bug trong CODE (báo loop agent fix theo spec)
-- Ghi chú ngắn `.context/test-notes.md` nếu là lỗi đáng nhớ (tùy chọn)
+- Mutation testing (mutmut / Stryker) — mutation score ≥ ngưỡng
+- Quality gate — chống expected-từ-code, try-catch nuốt lỗi, assert trivially
+- Hidden stash — test ẩn chạy CI, chống overfit
 
 ## Cấu trúc thư mục
 
 ```
-├── AGENT.md              ← pipeline autotest (3 nhánh)
-├── AGENTS.md             ← router (bug/feature/review/autotest)
-├── SPECIFICATIONS.md     ← spec chung (code + test dùng chung)
+├── AGENT.md              ← pipeline autotest (5 luồng + 3 nhánh sinh test)
+├── AGENTS.md             ← router
+├── SPECIFICATIONS.md     ← spec chung (code + test)
 ├── BRIEF.md
-├── opencode.jsonc        ← permission gate
+├── opencode.jsonc
+├── docs/
+│   ├── FLOWS.md          ← 5 luồng + hợp đồng test-scope
+│   └── generated/        ← inventory (auto-gen)
 ├── .opencode/
-│   ├── agent/            ← test-writer · characterization-writer · manual-capture-writer · test-reflector · test-validator
-│   └── command/          ← /autotest · /characterize · /capture-manual · /verify-tests
-├── .agent/               ← spec-validator · workflow (match template dev — spec là cái chung)
-├── skills/               ← property-based-testing · mutation-testing · characterization-golden · manual-to-auto · test-quality-gate · coverage-driven
-├── scripts/              ← generate-inventory · mutation-scan
-└── docs/generated/       ← inventory (auto-gen)
+│   ├── agent/            ← test-writer · characterization-writer · manual-capture-writer · scope-planner · test-reflector · test-validator
+│   └── command/          ← /autotest · /test-scope · /regression · /capture-manual · /from-cases · /characterize · /verify-tests
+├── .agent/               ← spec-validator · workflow (spec là cái chung với dev)
+├── skills/               ← property-based-testing · mutation-testing · characterization-golden · manual-to-auto · test-quality-gate · coverage-driven · test-scope-contract
+└── scripts/              ← generate-inventory
 ```
 
 ## Nguyên tắc (bất biến)
 
 1. **Spec-first** — test và code cùng bám `SPECIFICATIONS.md`, không "test xác nhận bug"
 2. **Test PHẢI có khả năng bất đồng với code** — mutation score là thước đo, không phải coverage %
-3. **Characterization = khóa behavior hiện tại, không phải khóa "đúng"** — test không chứng minh code đúng, nó chứng minh hành vi không đổi
-4. **Manual case → auto test ngay khi có thể** — giảm test tay lặp lại, chỉ giữ manual-only khi thật cần
-5. **Spec là cái chung duy nhất với template dev** — test và code cùng bám `SPECIFICATIONS.md`
-6. **Test sinh bởi AI phải qua gate** — không merge test chưa qua verify-tests
+3. **Characterization = khóa behavior hiện tại, không phải "đúng"**
+4. **Manual case → auto test ngay khi có thể** — chỉ giữ manual-only khi thật cần
+5. **Test-scope.json là hợp đồng từ dev** — đọc để test đúng phạm vi, thiếu thì hỏi, không tự đoán rộng
+6. **Test sinh bởi AI phải qua gate** — không merge test chưa qua `/verify-tests`
+7. **Luồng 4/5 tự add vào regression** — mọi test mới trở thành lưới an toàn cho lần sau
