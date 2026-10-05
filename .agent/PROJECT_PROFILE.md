@@ -9,6 +9,7 @@
 - **mutation_tool:** mutmut (Python) · stryker (TS)
 - **mutation_score_floor:** 70 (ngưỡng mutation score mặc định)
 - **hidden_stash_dir:** tests/hidden (test ẩn chống overfit — không đưa vào prompt agent)
+- **test_registry:** test-registry.json (manifest BỘ TEST HOÀN CHỈNH — mọi luồng ghi vào qua /test-register)
 - **source_roots:** ["src"]
 - **manual_cases_dir:** .context/manual-cases/
 - **package_manager:** npm | uv | pip — (trống)
@@ -18,4 +19,4 @@
 ## Bắt buộc khi khởi tạo
 1. `.spec-cache/SPECIFICATIONS.md` — spec chung (cùng format template dev) hoặc `BRIEF.md` → brainstorm
 2. Chạy spec-validator PASS trước khi sinh test
-3. Khởi tạo `tests/` + `.context/manual-cases/` + `tests/hidden/`
+3. Khởi tạo `tests/` + `.context/manual-cases/` + `tests/hidden/` + `test-registry.json` (bộ test hoàn chỉnh)

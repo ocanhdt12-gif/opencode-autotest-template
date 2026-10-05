@@ -2,6 +2,8 @@
 
 > Template xử lý bài toán: **sinh + duy trì auto test**. Match với template dev: **SPEC là cái chung** — nhưng test **không lưu spec**, chỉ **link git** (`spec-source.json` → `.spec-cache/`).
 
+> ⭐ **Một bộ test hoàn chỉnh:** mọi luồng test đều chỉ để nuôi **1 bộ test duy nhất** (`tests/` + `test-registry.json`) — vừa retest tính năng cũ, vừa test feature mới. Luồng nào xong cũng **bổ sung/cập nhật** vào bộ này, không tạo suite song song. Chi tiết: `docs/FLOWS.md` + `skills/complete-test-suite`.
+
 ## 5 luồng test (xem chi tiết `docs/FLOWS.md`)
 
 | # | Luồng | Command | Đọc gì | Test gì |
@@ -12,6 +14,7 @@
 | 4 | Manual→Auto (case test tay) | `/capture-manual` | manual-cases/ | case tay → auto, add regression |
 | 5 | Theo test case user tạo | `/from-cases` | file case user | đúng case user |
 | — | Độ phủ | `/coverage` | `.context/coverage.json` (test tự lưu) | req đã/chưa test |
+| — | Đăng ký bộ test ⭐ | `/test-register` | mọi luồng sau khi chạy | ghi `test-registry.json` + board (mọi luồng tự gọi) |
 
 ## Nhánh sinh test (bổ trợ)
 
@@ -42,6 +45,10 @@ TEST REFLECTOR — phân loại fail: bug-test / bug-code → sửa đúng chỗ
       │
       ▼
 VERIFY-TESTS — mutation + quality gate + hidden stash → PASS/FAIL
+      │
+      ▼
+📦 /test-register — ghi mọi test mới/đổi vào test-registry.json + .context/coverage.json
+      (MỌI luồng đều kết thúc ở đây → luôn có 1 bộ test hoàn chỉnh để retest)
 ```
 
 ## Gate bắt buộc
@@ -52,6 +59,7 @@ VERIFY-TESTS — mutation + quality gate + hidden stash → PASS/FAIL
 4. Manual→Auto / from-cases: test xanh, assert thật, không ép tự động hóa case cần người
 5. `verify-tests`: mutation score ≥ ngưỡng + quality gate + hidden stash
 6. Mọi fail → test-reflector phân loại → sửa đúng chỗ
+7. **Mọi luồng kết thúc bằng `/test-register`** — test mới/đổi phải vào bộ test hoàn chỉnh (`test-registry.json` + board); không tạo suite song song
 
 ## Conventions
 
@@ -61,4 +69,5 @@ VERIFY-TESTS — mutation + quality gate + hidden stash → PASS/FAIL
 - Scrub unstable fields trong golden test
 - `manual-only` case ghi rõ lý do
 - Luồng 4/5: test tự động hoá xong **phải add vào regression suite** (luồng 3)
+- ⭐ **Một bộ duy nhất**: mọi luồng ghi vào `tests/` hiện có + `test-registry.json`; tra registry trước để **cập nhật** thay vì thêm bản sao; test mới/phủ mới → append, không dựng suite riêng
 - Mỗi slice 1 commit

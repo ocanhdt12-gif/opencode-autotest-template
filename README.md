@@ -4,6 +4,8 @@ Template OpenCode chuyên **sinh + duy trì Auto Test** — viết test từ spe
 
 > **Match với template dev:** **SPEC là cái chung duy nhất** — nhưng template test **KHÔNG lưu spec**; nó giữ **link git** tới folder spec của repo DEV (`spec-source.json` + `/spec-link <git-url>`) → sync về `.spec-cache/` mỗi lần chạy, tránh 2 bản spec lệch nhau. Template DEV sinh `.spec-cache/...` — xem `docs/SPEC_VERSIONING.md`.
 
+> ⭐ **Một bộ test hoàn chỉnh:** mọi luồng test đều chỉ để **nuôi 1 bộ test duy nhất** (`tests/`), vừa retest tính năng cũ vừa test feature mới. Luồng nào chạy xong cũng **bổ sung/cập nhật** vào bộ này + ghi `test-registry.json` (nguồn gốc, ref, trạng thái) — không tạo suite song song. Xem `docs/FLOWS.md` mục "Đăng ký bộ test hoàn chỉnh".
+
 ## 5 luồng test (chi tiết: `docs/FLOWS.md`)
 
 | # | Luồng | Command | Khi nào |
@@ -14,6 +16,7 @@ Template OpenCode chuyên **sinh + duy trì Auto Test** — viết test từ spe
 | 4 | **Manual → Auto** | `/capture-manual` | Case đã test tay xong → chụp thành auto test |
 | 5 | **Theo case user** | `/from-cases` | User/khách đưa bộ test case → chuyển thành auto test |
 | — | **Độ phủ** | `/coverage` | Xem req nào đã/chưa test (board `.context/coverage.json` — do test tự lưu) |
+| — | **Đăng ký bộ test** ⭐ | `/test-register` | Sau MỌI luồng — ghi test mới/đổi vào `test-registry.json` + board (mọi luồng tự gọi) |
 
 ## Quickstart
 
@@ -95,12 +98,23 @@ Golden test khóa behavior hiện tại (scrub timestamp/id/random) → mutation
 - Danh sách req lấy từ spec (qua link git); **trạng thái do test tự cập nhật** sau mỗi lần chạy
 - DEV không giữ board này
 
+### 9. ⭐ Đăng ký vào bộ test hoàn chỉnh (mọi luồng đều gọi)
+```bash
+/test-register
+```
+- Mọi luồng (full / test-scope / regression / manual / from-cases / characterize) **tự gọi bước này** sau khi chạy test
+- Ghi `test-registry.json` (root repo test): mỗi test 1 entry — `file` · `refs` (R-xx/case id) · `origin` (luồng nào sinh) · `regression` · `status` · `lastRunAt`
+- Cập nhật `.context/coverage.json` (req → `covered`/`failing` + `testRef`)
+- **Không tạo suite song song**: test mới append vào bộ hiện có; tra registry trước để **cập nhật** thay vì thêm bản sao
+- Kết quả: luôn có **1 bộ test hoàn chỉnh** để retest tính năng cũ + test feature mới
+
 ## Cấu trúc thư mục
 
 ```
 ├── AGENT.md              ← pipeline autotest (5 luồng + 3 nhánh sinh test)
 ├── AGENTS.md             ← router
 ├── spec-source.json      ← link git tới folder spec của repo DEV (điền khi bắt đầu)
+├── test-registry.json    ← manifest BỘ TEST HOÀN CHỈNH (mọi test + nguồn gốc + trạng thái)
 ├── BRIEF.md
 ├── opencode.jsonc
 ├── .spec-cache/          ← spec clone về (gitignored, read-only)
@@ -110,9 +124,9 @@ Golden test khóa behavior hiện tại (scrub timestamp/id/random) → mutation
 │   └── generated/        ← inventory (auto-gen)
 ├── .opencode/
 │   ├── agent/            ← test-writer · characterization-writer · manual-capture-writer · scope-planner · spec-source-linker · test-reflector · test-validator
-│   └── command/          ← /autotest · /test-scope · /regression · /capture-manual · /from-cases · /characterize · /verify-tests · /spec-link · /coverage
+│   └── command/          ← /autotest · /test-scope · /regression · /capture-manual · /from-cases · /characterize · /verify-tests · /spec-link · /coverage · /test-register
 ├── .agent/               ← spec-validator · workflow
-├── skills/               ← property-based-testing · mutation-testing · characterization-golden · manual-to-auto · test-quality-gate · coverage-driven · test-scope-contract
+├── skills/               ← property-based-testing · mutation-testing · characterization-golden · manual-to-auto · test-quality-gate · coverage-driven · test-scope-contract · complete-test-suite
 └── scripts/              ← generate-inventory
 ```
 

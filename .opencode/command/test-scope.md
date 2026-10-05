@@ -15,7 +15,8 @@
 4. Chạy `impact.regression` — chuyển `/regression` nếu cần chuyên sâu
 5. `risk: high` → bắt buộc mutation verify
 6. Cập nhật `.context/test-status.json` (specVersionCovered / scopeVersionCovered)
-7. Báo cáo: test mới / test lại pass-fail, ghi chú
+7. **`/test-register test-scope`** — test mới/đổi vào bộ hoàn chỉnh (`test-registry.json` + `.context/coverage.json`)
+8. Báo cáo: test mới / test lại pass-fail, ghi chú
 
 ## Không có scope file?
 - Hỏi user: chạy full (`/autotest --full`) hay chỉ module X?
@@ -25,3 +26,4 @@
 - Không bỏ sót direct/dependents (trừ khi ghi lý do)
 - Test mới vẫn phải qua quality gate (không test vô hại)
 - Nếu `scopeVersion` đã cover rồi → báo "đã cover", không test lại
+- Test mới **append vào bộ test hoàn chỉnh** — không tạo suite riêng cho luồng

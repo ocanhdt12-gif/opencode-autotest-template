@@ -18,9 +18,10 @@ Khóa behavior HIỆN TẠI của code cũ chưa có test — để sửa/refact
 4. **Bổ sung theo coverage**: chạy coverage → tìm nhánh chưa chạm → thêm input
 5. **Mutation verify (bắt buộc)**: cố tình sửa code (đổi điều kiện, bỏ dòng...) → chạy test → **PHẢI fail**. Test không bắt được mutation = vô nghĩa → thêm test
 6. Ghi chú behavior đã khóa + bất thường phát hiện (có thể là bug cũ — báo, không tự sửa)
+7. **`/test-register characterization`** — golden test vào bộ test hoàn chỉnh
 
 ## Output
-- Golden/snapshot test files
+- Golden/snapshot test files (**append vào bộ test hoàn chỉnh**, không dựng suite riêng)
 - `.context/characterization-report.md` — danh sách behavior đã khóa + mutation score + lưu ý bug tiềm ẩn
 
 ## Gate
@@ -28,3 +29,4 @@ Khóa behavior HIỆN TẠI của code cũ chưa có test — để sửa/refact
 - [ ] Unstable fields đã scrub
 - [ ] Không đổi behavior code (chỉ thêm test)
 - [ ] Báo bug cũ phát hiện, không tự fix
+- [ ] Golden test đã vào `test-registry.json`

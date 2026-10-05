@@ -1,0 +1,5 @@
+{
+  "_comment": "Manifest của BỘ TEST HOÀN CHỈNH (repo TEST). Mọi luồng test đều ghi vào đây qua /test-register — test mới/cập nhật append vào bộ duy nhất này, không tạo suite song song. Retest (luồng 3) + test feature mới đều bám file này.",
+  "updatedAt": null,
+  "tests": []
+}

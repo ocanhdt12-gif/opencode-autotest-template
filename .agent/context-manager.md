@@ -17,10 +17,12 @@ Compress conversation history khi context phình to. Giữ lại info quan trọ
 ### Always Pin (never compress away)
 1. `.spec-cache/SPECIFICATIONS.md` — chỉ giữ feature list (top-level), không giữ full detail
 2. `.context/progress.json` — full, luôn luôn
-3. `.context/test-notes.md` — chỉ giữ 5 entries gần nhất (nếu có)
-4. `.context/decisions.md` — full
-5. Current task file — full
-6. File đang edit — full
+3. `test-registry.json` — manifest BỘ TEST HOÀN CHỈNH (mọi luồng ghi vào; không để mất)
+4. `.context/coverage.json` — board độ phủ (req → covered/failing), full
+5. `.context/test-notes.md` — chỉ giữ 5 entries gần nhất (nếu có)
+6. `.context/decisions.md` — full
+7. Current task file — full
+8. File đang edit — full
 
 ### Trim (replace bằng 1-line summary)
 1. Completed tasks detail → 1-line mỗi task

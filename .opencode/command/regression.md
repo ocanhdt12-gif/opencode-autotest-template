@@ -13,8 +13,9 @@
 2. Chạy lại các test **đã có** thuộc các luồng đó (không viết mới trừ khi thiếu)
 3. Nếu vỡ → `test-reflector` phân loại: bug-code (báo dev) / bug-test (sửa test)
 4. Cập nhật `.context/test-status.json`
-5. Báo cáo: luồng nào còn xanh, luồng nào vỡ + nguyên nhân
+5. **`/test-register regression`** — cập nhật `status`/`lastRunAt` trong `test-registry.json` (không sinh test mới)
+6. Báo cáo: luồng nào còn xanh, luồng nào vỡ + nguyên nhân
 
 ## Rule
-- Regression = chạy test **đã tồn tại**, không phải sinh mới
+- Regression = chạy test **đã tồn tại** trong bộ hoàn chỉnh, không phải sinh mới
 - Bộ regression tự lớn lên: luồng 4 (manual→auto) + luồng 5 (from-cases) tự add test mới vào đây
