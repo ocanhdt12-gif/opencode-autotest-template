@@ -17,13 +17,15 @@ Entry point mọi session. Phân loại intent rồi route.
 | review/check | reviewer (nếu dự án có) |
 
 ## Mặc định khi session bắt đầu
-1. Đọc `SPECIFICATIONS.md` — nguồn truth
-2. Chạy test suite hiện tại xem pass không (`npm test` / `pytest`)
-3. Check `spec/test-scope/current.json` — có scope mới từ dev không? (so version với `.context/test-status.json`)
-4. Check `.context/manual-cases/` — case manual chưa chuyển auto
+1. `/spec-link --sync` — pull spec mới nhất về `.spec-cache/` (nếu chưa link → hỏi link)
+2. Đọc `.spec-cache/SPECIFICATIONS.md` — nguồn truth
+3. Chạy test suite hiện tại xem pass không (`npm test` / `pytest`)
+4. Check `.spec-cache/spec/test-scope/current.json` — có scope mới từ dev không? (so version với `.context/test-status.json`)
+5. Check `.context/manual-cases/` — case manual chưa chuyển auto
 
 ## Quy tắc nền
+- Spec = link git tới `.spec-cache/` (KHÔNG lưu bản riêng — tránh lệch)
 - Mọi test → traceability về spec (`test-validator`) hoặc case user/manual
-- Test-scope.json là hợp đồng từ dev; thiếu → hỏi, không tự đoán rộng
+- Test-scope là hợp đồng từ dev; thiếu → hỏi, không tự đoán rộng
 - Mọi fail → test-reflector phân loại → sửa đúng chỗ
 - Không merge nếu chưa `/verify-tests` pass

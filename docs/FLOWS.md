@@ -2,7 +2,7 @@
 
 > **Ngày:** 05/10/2026 · Định nghĩa 5 luồng test + hợp đồng bàn giao `test-scope` giữa template DEV (viết code) và template AUTOTEST (viết/ chạy test).
 
-## Hợp đồng bàn giao: `spec/test-scope/current.json` (versioned)
+## Hợp đồng bàn giao: `.spec-cache/spec/test-scope/current.json` (versioned)
 
 **Template DEV sinh ra** sau mỗi bug fix / feature update (xem template dev FEATURE_WORKFLOW). **Template AUTOTEST đọc** để biết cần test cái gì — không phải tự mò.
 
@@ -15,7 +15,7 @@
   "generatedAt": "2026-10-05T13:32:00+07:00",
   "trigger": "initial-build | bug-fix | feature-update",
   "workItem": "bug-login-timeout | feature-stripe-selfserve",
-  "specRefs": ["R-01", "R-05"],              // requirement liên quan (bám SPECIFICATIONS.md)
+  "specRefs": ["R-01", "R-05"],              // requirement liên quan (bám .spec-cache/SPECIFICATIONS.md)
   "changed": {
     "files": ["src/auth/login.ts", "src/api/session.ts"],
     "modules": ["auth", "session"]
@@ -41,12 +41,12 @@
 ### Luồng 1 — Full test lần đầu (sau khi code xong từ template dev)
 - **Khi nào:** code hoàn thành lần đầu (initial build), chưa có test suite
 - **Command:** `/autotest --full`
-- **Làm gì:** đọc `SPECIFICATIONS.md` → sinh test cho **toàn bộ requirement R-xx** → chạy ĐỎ → (code) → XANH → `/verify-tests`
+- **Làm gì:** đọc `.spec-cache/SPECIFICATIONS.md` → sinh test cho **toàn bộ requirement R-xx** → chạy ĐỎ → (code) → XANH → `/verify-tests`
 - **Đầu ra:** test suite đầy đủ phủ spec
 
 ### Luồng 2 — Test phần vừa sửa (bug fix / feature mới) 🔑 anh nhấn mạnh
-- **Khi nào:** vừa fix bug / thêm tính năng → template dev đã sinh `spec/test-scope/current.json`
-- **Command:** `/test-scope` (mặc định đọc `spec/test-scope/current.json`)
+- **Khi nào:** vừa fix bug / thêm tính năng → template dev đã sinh `.spec-cache/spec/test-scope/current.json`
+- **Command:** `/test-scope` (mặc định đọc `.spec-cache/spec/test-scope/current.json`)
 - **Làm gì:** đọc scope → chỉ test **changed.direct + changed.dependents + acceptance** (không test lại cả repo)
 - **Đầu ra:** test cho đúng phạm vi vừa đổi — nhanh, tập trung
 - **Ghi chú:** đây chính là "template code gen scope cho template test dùng luôn" — anh không phải tự check
@@ -75,9 +75,9 @@
 
 | # | Luồng | Command | Đọc gì | Test gì |
 |---|---|---|---|---|
-| 1 | Full lần đầu | `/autotest --full` | SPECIFICATIONS.md | toàn bộ R-xx |
-| 2 | Phần vừa sửa | `/test-scope` | spec/test-scope/current.json | direct + dependents + acceptance |
-| 3 | Regression | `/regression` | spec/test-scope/current.json | regression list + dependents (test cũ) |
+| 1 | Full lần đầu | `/autotest --full` | .spec-cache/SPECIFICATIONS.md | toàn bộ R-xx |
+| 2 | Phần vừa sửa | `/test-scope` | .spec-cache/spec/test-scope/current.json | direct + dependents + acceptance |
+| 3 | Regression | `/regression` | .spec-cache/spec/test-scope/current.json | regression list + dependents (test cũ) |
 | 4 | Manual→Auto | `/capture-manual` | manual-cases/ | case tay → auto (rồi add regression) |
 | 5 | Theo case user | `/from-cases` | file test case user | đúng case user đưa |
 
@@ -85,7 +85,7 @@
 
 ```
 [DEV] code lần đầu ──► (1) /autotest --full            ← test toàn bộ spec
-[DEV] fix bug/feature ─► sinh spec/test-scope/current.json ──► (2) /test-scope   ← test phần sửa
+[DEV] fix bug/feature ─► sinh .spec-cache/spec/test-scope/current.json ──► (2) /test-scope   ← test phần sửa
                                           └──────► (3) /regression   ← retest luồng cũ
 [TEST TAY] case pass ──► (4) /capture-manual ──► add vào regression suite
 [USER] đưa test case ──► (5) /from-cases ──► auto test bám case user

@@ -2,14 +2,14 @@
 
 Template OpenCode chuyên **sinh + duy trì Auto Test** — viết test từ spec trước khi code, khóa behavior legacy, chụp test manual, và test theo case user tạo.
 
-> **Match với template dev:** chỉ **SPEC là cái chung** — cả 2 template cùng dùng `SPECIFICATIONS.md` (có version). Template DEV sinh `spec/test-scope/current.json` (kèm `specVersion`+`scopeVersion`) sau mỗi lần sửa → template này đọc để biết cần test gì, và ghi `.context/test-status.json` để biết đã cover đến đâu. Chi tiết: `docs/SPEC_VERSIONING.md`.
+> **Match với template dev:** **SPEC là cái chung duy nhất** — nhưng template test **KHÔNG lưu spec**; nó giữ **link git** tới folder spec của repo DEV (`spec-source.json` + `/spec-link <git-url>`) → sync về `.spec-cache/` mỗi lần chạy, tránh 2 bản spec lệch nhau. Template DEV sinh `.spec-cache/...` — xem `docs/SPEC_VERSIONING.md`.
 
 ## 5 luồng test (chi tiết: `docs/FLOWS.md`)
 
 | # | Luồng | Command | Khi nào |
 |---|---|---|---|
 | 1 | **Full lần đầu** | `/autotest --full` | Code xong lần đầu từ template dev → test toàn bộ spec |
-| 2 | **Phần vừa sửa** 🔑 | `/test-scope` | Vừa fix bug / thêm feature → test đúng phạm vi (đọc `spec/test-scope/current.json` từ dev) |
+| 2 | **Phần vừa sửa** 🔑 | `/test-scope` | Vừa fix bug / thêm feature → test đúng phạm vi (đọc `.spec-cache/spec/test-scope/current.json` từ dev) |
 | 3 | **Regression** | `/regression` | Sau update → retest luồng cũ, đảm bảo không vỡ |
 | 4 | **Manual → Auto** | `/capture-manual` | Case đã test tay xong → chụp thành auto test |
 | 5 | **Theo case user** | `/from-cases` | User/khách đưa bộ test case → chuyển thành auto test |
@@ -24,10 +24,15 @@ npx opencode
 
 ## Step-by-step
 
-### 0. Nạp Spec (dùng chung với template dev)
-- Đặt `SPECIFICATIONS.md` (hoặc `BRIEF.md` → brainstorm sinh spec)
-- Chạy spec-validator → spec PASS trước khi sinh test
-- Mỗi requirement có **id** (`R-01`) — test traceable
+### 0. Link spec (bắt đầu dự án — nhập link git)
+Template test **không lưu spec**. Link tới folder spec trong repo DEV:
+```bash
+/spec-link git@github.com:org/dev-repo.git          # clone shallow+sparse folder spec về .spec-cache/
+/spec-link --sync                                   # pull spec mới nhất mỗi lần chạy test
+/spec-link --status                                 # xem đang link đâu, spec version nào
+```
+- Đọc requirements từ `.spec-cache/SPECIFICATIONS.md`, scope từ `.spec-cache/spec/test-scope/current.json`
+- Chưa link → hỏi, không tự bịa spec
 
 ### 1. Luồng 1 — Full test lần đầu
 ```bash
@@ -39,7 +44,7 @@ npx opencode
 ```bash
 /test-scope
 ```
-- Đọc `spec/test-scope/current.json` (template DEV sinh, có `specVersion`+`scopeVersion`) → `scope-planner` phân loại:
+- Đọc `.spec-cache/spec/test-scope/current.json` (template DEV sinh, có `specVersion`+`scopeVersion`) → `scope-planner` phân loại:
   - `impact.direct` → sinh test mới
   - `impact.dependents` → test lại
   - `acceptance` → đảm bảo có test
@@ -84,27 +89,25 @@ Golden test khóa behavior hiện tại (scrub timestamp/id/random) → mutation
 ```
 ├── AGENT.md              ← pipeline autotest (5 luồng + 3 nhánh sinh test)
 ├── AGENTS.md             ← router
-├── SPECIFICATIONS.md     ← spec chung (code + test)
+├── spec-source.json      ← link git tới folder spec của repo DEV (điền khi bắt đầu)
 ├── BRIEF.md
 ├── opencode.jsonc
-├── spec/                 ← quản lý spec + test-scope theo version (xem docs/SPEC_VERSIONING.md)
-│   ├── CHANGELOG.md · updates/ · archive/
-│   └── test-scope/       ← current.json (dev sinh) · archive/
+├── .spec-cache/          ← spec clone về (gitignored, read-only)
 ├── docs/
 │   ├── FLOWS.md          ← 5 luồng + hợp đồng test-scope
-│   ├── SPEC_VERSIONING.md ← version spec + test-scope
+│   ├── SPEC_VERSIONING.md ← cách link + version spec/test-scope
 │   └── generated/        ← inventory (auto-gen)
 ├── .opencode/
-│   ├── agent/            ← test-writer · characterization-writer · manual-capture-writer · scope-planner · test-reflector · test-validator
-│   └── command/          ← /autotest · /test-scope · /regression · /capture-manual · /from-cases · /characterize · /verify-tests
-├── .agent/               ← spec-validator · workflow (spec là cái chung với dev)
+│   ├── agent/            ← test-writer · characterization-writer · manual-capture-writer · scope-planner · spec-source-linker · test-reflector · test-validator
+│   └── command/          ← /autotest · /test-scope · /regression · /capture-manual · /from-cases · /characterize · /verify-tests · /spec-link
+├── .agent/               ← spec-validator · workflow
 ├── skills/               ← property-based-testing · mutation-testing · characterization-golden · manual-to-auto · test-quality-gate · coverage-driven · test-scope-contract
 └── scripts/              ← generate-inventory
 ```
 
 ## Nguyên tắc (bất biến)
 
-1. **Spec-first** — test và code cùng bám `SPECIFICATIONS.md`, không "test xác nhận bug"
+1. **Spec-first** — test bám spec từ `.spec-cache/` (nguồn duy nhất, không lưu bản riêng → không lệch)
 2. **Test PHẢI có khả năng bất đồng với code** — mutation score là thước đo, không phải coverage %
 3. **Characterization = khóa behavior hiện tại, không phải "đúng"**
 4. **Manual case → auto test ngay khi có thể** — chỉ giữ manual-only khi thật cần

@@ -1,13 +1,13 @@
 ---
-description: Test writer — viết test TRƯỚC code từ SPECIFICATIONS.md (test-first, nhánh A). Không đọc implementation trước khi viết test.
+description: Test writer — viết test TRƯỚC code từ .spec-cache/SPECIFICATIONS.md (test-first, nhánh A). Không đọc implementation trước khi viết test.
 ---
 
 # Test Writer Agent (Nhánh A — Test-first)
 
-Sinh test suite từ `SPECIFICATIONS.md` TRƯỚC khi code tồn tại. Test là "hợp đồng" code phải thỏa.
+Sinh test suite từ `.spec-cache/SPECIFICATIONS.md` TRƯỚC khi code tồn tại. Test là "hợp đồng" code phải thỏa.
 
 ## Input
-- `SPECIFICATIONS.md` — nguồn sự thật duy nhất
+- `.spec-cache/SPECIFICATIONS.md` — nguồn sự thật duy nhất
 - `.agent/PROJECT_PROFILE.md` — stack/test framework (vitest? pytest?)
 
 ## Quy trình

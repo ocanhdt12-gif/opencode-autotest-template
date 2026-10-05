@@ -8,7 +8,7 @@
 ```
 
 ## Luồng 1 — Full test lần đầu
-1. Đọc `SPECIFICATIONS.md` + `.agent/PROJECT_PROFILE.md` (framework test)
+1. Đọc `.spec-cache/SPECIFICATIONS.md` + `.agent/PROJECT_PROFILE.md` (framework test)
 2. Gọi `test-writer` → viết test cho **mọi** requirement `R-xx` (unit + property-based), traceable
 3. Chạy test → **ĐỎ đúng cách** (fail vì chưa có code, không phải fail vì test sai)
 4. Báo user: implement code tới khi XANH

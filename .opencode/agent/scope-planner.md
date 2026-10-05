@@ -1,14 +1,14 @@
 ---
-description: Scope planner — đọc spec/test-scope/current.json (do template dev sinh, có specVersion+scopeVersion) để lập kế hoạch test đúng phạm vi vừa sửa; phân loại direct/dependents/regression/acceptance; đối chiếu version để biết còn gì chưa cover. Dùng cho /test-scope và /regression.
+description: Scope planner — đọc .spec-cache/spec/test-scope/current.json (do template dev sinh, có specVersion+scopeVersion) để lập kế hoạch test đúng phạm vi vừa sửa; phân loại direct/dependents/regression/acceptance; đối chiếu version để biết còn gì chưa cover. Dùng cho /test-scope và /regression.
 ---
 
 # Scope Planner Agent
 
-Đọc hợp đồng `spec/test-scope/current.json` do template DEV sinh → lập kế hoạch test **đúng phạm vi thay đổi** + đối chiếu version để biết test đã cover tới đâu.
+Đọc hợp đồng `.spec-cache/spec/test-scope/current.json` do template DEV sinh → lập kế hoạch test **đúng phạm vi thay đổi** + đối chiếu version để biết test đã cover tới đâu.
 
 ## Input
-- `spec/test-scope/current.json` — hợp đồng (xem `skills/test-scope-contract`, schema `docs/SPEC_VERSIONING.md`)
-- `SPECIFICATIONS.md` — để verify `specRefs` + so version
+- `.spec-cache/spec/test-scope/current.json` — hợp đồng (xem `skills/test-scope-contract`, schema `docs/SPEC_VERSIONING.md`)
+- `.spec-cache/SPECIFICATIONS.md` — để verify `specRefs` + so version
 - `.context/test-status.json` — đã cover đến specVersion/scopeVersion nào
 - Test suite hiện có (`tests/`)
 

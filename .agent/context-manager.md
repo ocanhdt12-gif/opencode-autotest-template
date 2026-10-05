@@ -15,7 +15,7 @@ Compress conversation history khi context phình to. Giữ lại info quan trọ
 ## Strategy: Pin + Trim
 
 ### Always Pin (never compress away)
-1. `SPECIFICATIONS.md` — chỉ giữ feature list (top-level), không giữ full detail
+1. `.spec-cache/SPECIFICATIONS.md` — chỉ giữ feature list (top-level), không giữ full detail
 2. `.context/progress.json` — full, luôn luôn
 3. `.context/test-notes.md` — chỉ giữ 5 entries gần nhất (nếu có)
 4. `.context/decisions.md` — full

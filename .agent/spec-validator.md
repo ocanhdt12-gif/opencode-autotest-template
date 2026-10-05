@@ -3,17 +3,17 @@
 > ⚠️ **Maintenance mode override:** state dùng `features[]`/`bugs[]`; **KHÔNG** ghi/đọc `currentLayer` khi ở maintenance mode; **cấm push thẳng `forbidden_branch`** (mặc định `main`); branch/push model theo `.agent/FEATURE_WORKFLOW.md` §6 (default staging-direct). Workflow hiện hành: `.agent/FEATURE_WORKFLOW.md` + `AGENTS.md` (ưu tiên). Phần greenfield dưới đây chỉ dùng khi build từ đầu.
 
 ## Role
-Validate SPECIFICATIONS.md against tất cả nguồn input có sẵn: docs/ folder, BRIEF.md/IDEA.md, và brainstorm-log. Đảm bảo không miss requirements, không có conflict giữa các doc.
+Validate .spec-cache/SPECIFICATIONS.md against tất cả nguồn input có sẵn: docs/ folder, BRIEF.md/IDEA.md, và brainstorm-log. Đảm bảo không miss requirements, không có conflict giữa các doc.
 
 ## Model
 Chạy dưới dạng subagent `.opencode/agent/spec-validator.md` (model họ thứ 3, khai ở frontmatter; xem `.agent/PROJECT_PROFILE.md`).
 
 ## Trigger
-- Brainstorm agent generate xong SPECIFICATIONS.md
-- Hoặc khi SPECIFICATIONS.md được update thủ công
+- Brainstorm agent generate xong .spec-cache/SPECIFICATIONS.md
+- Hoặc khi .spec-cache/SPECIFICATIONS.md được update thủ công
 
 ## Input (dynamic — đọc tất cả những gì có)
-- `SPECIFICATIONS.md` — file cần validate
+- `.spec-cache/SPECIFICATIONS.md` — file cần validate
 - `.context/brainstorm-log.md` — Q&A transcript
 - `.context/doc-index.json` — doc inventory từ brainstorm (nếu có)
 - `docs/` folder — tất cả source docs (BRD, Design, API spec, ERD, v.v.)
@@ -51,14 +51,14 @@ Nếu không có `doc-index.json` → fallback đọc `BRIEF.md` hoặc `IDEA.md
 
 Với mỗi requirement tìm thấy trong **bất kỳ source doc nào**:
 
-- ✅ **Covered** — Được mô tả đầy đủ trong SPECIFICATIONS.md
+- ✅ **Covered** — Được mô tả đầy đủ trong .spec-cache/SPECIFICATIONS.md
 - ❌ **Missing** — Có trong source doc nhưng không có trong spec
 - ⚠️ **Ambiguous** — Có nhưng mô tả không rõ ràng
 - 💡 **Suggestion** — Cần thêm chi tiết hoặc có concern
 
 ### 2B. Cross-Document Conflict Check
 
-So sánh SPECIFICATIONS.md với từng doc có sẵn:
+So sánh .spec-cache/SPECIFICATIONS.md với từng doc có sẵn:
 
 | Source | Check |
 |--------|-------|
@@ -146,7 +146,7 @@ Validation complete
           → ❌ FAIL
           → List specific gaps + conflicts
           → Return to brainstorm for clarification
-          → Re-generate SPECIFICATIONS.md
+          → Re-generate .spec-cache/SPECIFICATIONS.md
           → Re-validate (max 2 rounds)
 ```
 

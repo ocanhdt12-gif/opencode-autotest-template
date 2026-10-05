@@ -1,10 +1,10 @@
 # /test-scope — Test đúng phần vừa sửa (luồng 2)
 
-Đọc `spec/test-scope/current.json` (do template DEV sinh, có specVersion+scopeVersion) → test chỉ phạm vi đã đổi.
+Đọc `.spec-cache/spec/test-scope/current.json` (do template DEV sinh, có specVersion+scopeVersion) → test chỉ phạm vi đã đổi.
 
 ## Cách dùng
 ```
-/test-scope                    → đọc spec/test-scope/current.json
+/test-scope                    → đọc .spec-cache/spec/test-scope/current.json
 /test-scope <path>             → dùng file scope khác
 ```
 

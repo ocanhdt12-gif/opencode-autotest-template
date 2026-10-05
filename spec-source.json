@@ -1,0 +1,12 @@
+{
+  "_comment": "Template TEST KHÔNG lưu spec — trỏ tới folder spec trong repo DEV (1 nguồn duy nhất). Điền khi bắt đầu bằng /spec-link <git-url>.",
+  "gitUrl": null,
+  "branch": "main",
+  "specFile": "SPECIFICATIONS.md",
+  "specDir": "spec",
+  "scopeFile": "spec/test-scope/current.json",
+  "cacheDir": ".spec-cache",
+  "sparse": false,
+  "lastSyncedAt": null,
+  "lastSyncedSpecVersion": null
+}

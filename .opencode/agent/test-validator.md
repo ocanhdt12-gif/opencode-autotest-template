@@ -1,5 +1,5 @@
 ---
-description: Test validator — validate test plan vs SPECIFICATIONS.md (traceability matrix). Mirror spec-validator của template dev.
+description: Test validator — validate test plan vs .spec-cache/SPECIFICATIONS.md (traceability matrix). Mirror spec-validator của template dev.
 ---
 
 # Test Validator Agent
@@ -7,7 +7,7 @@ description: Test validator — validate test plan vs SPECIFICATIONS.md (traceab
 Đảm bảo test suite **traceable về spec** — mỗi requirement có test, mỗi test bám requirement. Mirror spec-validator (template dev) nhưng cho test.
 
 ## Input
-- `SPECIFICATIONS.md` — nguồn truth
+- `.spec-cache/SPECIFICATIONS.md` — nguồn truth
 - `.context/test-plan.md` + test files
 
 ## Kiểm tra

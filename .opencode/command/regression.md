@@ -4,12 +4,12 @@
 
 ## Cách dùng
 ```
-/regression                  → đọc impact.regression + dependents trong spec/test-scope/current.json
+/regression                  → đọc impact.regression + dependents trong .spec-cache/spec/test-scope/current.json
 /regression --all            → chạy lại TOÀN BỘ test đã có (an toàn, chậm hơn)
 ```
 
 ## Flow
-1. Đọc `spec/test-scope/current.json` → lấy `impact.regression` + `impact.dependents`
+1. Đọc `.spec-cache/spec/test-scope/current.json` → lấy `impact.regression` + `impact.dependents`
 2. Chạy lại các test **đã có** thuộc các luồng đó (không viết mới trừ khi thiếu)
 3. Nếu vỡ → `test-reflector` phân loại: bug-code (báo dev) / bug-test (sửa test)
 4. Cập nhật `.context/test-status.json`

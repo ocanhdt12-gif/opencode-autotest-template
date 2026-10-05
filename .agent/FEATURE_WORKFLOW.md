@@ -4,7 +4,7 @@
 
 ## Workflow chính (test-first — mỗi feature/task)
 
-1. **Spec**: đọc `SPECIFICATIONS.md` → xác định requirement `R-xx` liên quan → spec-validator đảm bảo spec PASS
+1. **Spec**: đọc `.spec-cache/SPECIFICATIONS.md` → xác định requirement `R-xx` liên quan → spec-validator đảm bảo spec PASS
 2. **Test trước** (`/autotest`): test-writer viết test từ spec (unit + property-based), traceable `R-xx`
 3. **Verify ĐỎ**: chạy test → phải fail đúng cách (chưa có code) — không red = test sai
 4. **Code**: implement tới khi test XANH (có thể dùng template dev để code)

@@ -16,6 +16,6 @@
 - **branch_model:** staging-direct
 
 ## Bắt buộc khi khởi tạo
-1. `SPECIFICATIONS.md` — spec chung (cùng format template dev) hoặc `BRIEF.md` → brainstorm
+1. `.spec-cache/SPECIFICATIONS.md` — spec chung (cùng format template dev) hoặc `BRIEF.md` → brainstorm
 2. Chạy spec-validator PASS trước khi sinh test
 3. Khởi tạo `tests/` + `.context/manual-cases/` + `tests/hidden/`
