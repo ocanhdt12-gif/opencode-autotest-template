@@ -12,7 +12,7 @@ Hợp đồng để template DEV báo cho template AUTOTEST **cần test cái g�
 | Vai | Ai | Khi nào | Ghi vào |
 |---|---|---|---|
 | **Producer** | template DEV (`builder`, sau bug fix / feature) | cuối mỗi lần sửa | `.spec-cache/spec/test-scope/current.json` |
-| **Consumer** | template AUTOTEST (`scope-planner` + `/autotest`) | giai đoạn 0 của `/autotest` | đọc file trên + ghi `.context/test-status.json` (ở giai đoạn 3) |
+| **Consumer** | template AUTOTEST | giai đoạn 0 của `/autotest` | đọc file trên + ghi `.context/test-status.json` (ở giai đoạn E) |
 
 ## Vị trí & schema
 

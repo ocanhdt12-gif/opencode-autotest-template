@@ -105,9 +105,9 @@ Tiến độ **tự cập nhật sau khi chạy** (không gõ `/coverage` để 
 │   ├── SPEC_VERSIONING.md ← cách link + version spec/test-scope
 │   └── generated/        ← inventory (auto-gen)
 ├── .opencode/
-│   ├── agent/            ← test-case-author · test-writer · characterization-writer · manual-capture-writer · scope-planner · spec-source-linker · test-reflector · test-validator
+│   ├── agent/            ← test-case-author · test-writer · characterization-writer · manual-capture-writer · test-reflector
 │   └── command/          ← /autotest · /retest · /characterize · /capture-manual · /from-cases · /verify-tests · /spec-link · /coverage
-├── .agent/               ← spec-validator · workflow
+├── .agent/               ← spec-validator · workflow (FEATURE_WORKFLOW + PROJECT_PROFILE)
 ├── skills/               ← test-case-first · property-based-testing · mutation-testing · characterization-golden · manual-to-auto · test-quality-gate · coverage-driven · complete-test-suite · test-scope-contract
 └── scripts/              ← generate-inventory
 ```

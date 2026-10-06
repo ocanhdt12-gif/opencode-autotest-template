@@ -12,7 +12,6 @@ Soạn **test case** từ spec → để user duyệt. **KHÔNG viết test code
 - `.context/test-cases/*.md` — test case đã có (tránh trùng)
 - `.context/test-tasks.json` — trạng thái đã test chưa
 - `.agent/PROJECT_PROFILE.md`
-
 ## Quy trình
 
 1. **Đọc spec** → liệt kê `R-xx` **mới / chưa có test case** (đối chiếu test case đã có + `coverage.json`).

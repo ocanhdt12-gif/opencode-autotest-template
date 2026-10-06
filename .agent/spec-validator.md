@@ -6,7 +6,7 @@
 Validate .spec-cache/SPECIFICATIONS.md against tất cả nguồn input có sẵn: docs/ folder, BRIEF.md/IDEA.md, và brainstorm-log. Đảm bảo không miss requirements, không có conflict giữa các doc.
 
 ## Model
-Chạy dưới dạng subagent `.opencode/agent/spec-validator.md` (model họ thứ 3, khai ở frontmatter; xem `.agent/PROJECT_PROFILE.md`).
+Chạy dưới dạng subagent prompt-level `.agent/spec-validator.md` (chạy trong session chính, không có wrapper `.opencode/agent/`; xem `.agent/PROJECT_PROFILE.md`).
 
 ## Trigger
 - Brainstorm agent generate xong .spec-cache/SPECIFICATIONS.md

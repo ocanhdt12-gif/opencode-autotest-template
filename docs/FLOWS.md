@@ -38,7 +38,7 @@ Mọi test đều nuôi **1 bộ duy nhất** trong repo — vừa **retest tín
 }
 ```
 
-**Producer:** template DEV. **Consumer:** template AUTOTEST (`scope-planner` + `/autotest`).
+**Producer:** template DEV. **Consumer:** template AUTOTEST giai đoạn 0 của `/autotest`.
 
 ---
 
