@@ -83,7 +83,7 @@ Template DEV sinh `.spec-cache/spec/test-scope/current.json` (có `specVersion`+
 
 ## Conventions
 
-- Test case: `.context/test-cases/<module>.md` (gom theo module), id `TC-<module>-NN`
+- Test case: `.context/test-cases/<module>.md` (gom theo module, **dạng bảng** mỗi dòng 1 case), id `TC-<module>-NN`; task mới: cùng module → **update file cũ** (thêm dòng), module mới → **tạo file mới**; 1 module = 1 file
 - Trạng thái task: `.context/test-tasks.json` (case nào đã/chưa test)
 - Test file trong `tests/`; test gắn `TC-xx` + `R-xx`
 - Test name phản ánh hành vi, không implementation

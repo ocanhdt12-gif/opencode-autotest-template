@@ -29,7 +29,8 @@ Entry point mọi session. Phân loại intent rồi route.
 ## ⭐ Luật trục: TEST-CASE-FIRST (`skills/test-case-first`)
 
 - **SPEC → TEST CASE (user check/sửa/chốt) → TEST CODE → chạy.** Mọi test phải follow test case.
-- Test case gom theo **module** ở `.context/test-cases/<module>.md`, id `TC-<module>-NN`, `Status: draft→approved`.
+- Test case gom theo **module**, viết **dạng BẢNG** (mỗi dòng 1 case) ở `.context/test-cases/<module>.md`, id `TC-<module>-NN`, `Status: draft→approved`.
+- 📌 **Task mới cần test**: cùng module đã có → **update file cũ** (thêm dòng vào bảng); module mới → **tạo file mới**. 1 module = 1 file, không tạo file trùng.
 - **User phải chốt test case trước khi chạy** (human checkpoint).
 - Trạng thái task ở `.context/test-tasks.json` → **không test lại cái đã test**.
 

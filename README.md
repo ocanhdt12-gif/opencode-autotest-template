@@ -40,7 +40,7 @@ Template test **không lưu spec** — chỉ trỏ tới folder spec trong repo 
 1. **Config spec** — chưa link thì hỏi `/spec-link <git-url>`
 2. **Đọc spec + nêu overview** — spec version, các module, danh sách `R-xx`, phần chưa có test
 3. **Brainstorm câu hỏi** — chỗ spec mơ hồ (expected, edge case, ưu tiên) → hỏi user
-4. **Tạo TEST CASE** (`TC-<module>-NN`) gom theo module → `.context/test-cases/<module>.md`, `Status: draft`
+4. **Tạo TEST CASE** (`TC-<module>-NN`) gom theo module → `.context/test-cases/<module>.md`, `Status: draft` — **dạng bảng** (mỗi dòng 1 case); task mới: cùng module → **update file cũ** (thêm dòng), module mới → **tạo file mới**
 5. ⛔ **Chờ user sửa + update test case** → chốt (`Status: approved`)
 6. **Chạy ngầm (headless)** theo test case → `headless-run.json` + **log bug ra file** nếu có
 7. **Chạy browser TỪNG CASE** (headed, bung hẳn ra) — gom theo module, mỗi lần 1 case, xong **giữ browser mở** và **chờ user chọn case tiếp**
@@ -95,7 +95,7 @@ Tiến độ **tự cập nhật sau khi chạy** (không gõ `/coverage` để 
 ├── opencode.jsonc
 ├── .spec-cache/          ← spec clone về (gitignored, read-only)
 ├── .context/
-│   ├── test-cases/       ← TEST CASE gom theo module (<module>.md, TC-xx, draft→approved)
+│   ├── test-cases/       ← TEST CASE dạng BẢNG theo module (<module>.md, TC-xx, draft→approved; task mới: cùng module=update file cũ, module mới=file mới)
 │   ├── test-tasks.json   ← trạng thái task (case nào đã/chưa test)
 │   ├── test-results/     ← headless-run.json · browser-run.json · bugs.md
 │   ├── coverage.json     ← tiến độ theo requirement

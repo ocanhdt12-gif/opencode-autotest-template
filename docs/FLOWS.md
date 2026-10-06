@@ -13,8 +13,9 @@ Mọi test đều nuôi **1 bộ duy nhất** trong repo — vừa **retest tín
 
 ## Test case — nơi user chốt "cần test cái gì"
 
-- Test case gom theo **module**: `.context/test-cases/<module>.md`, id `TC-<module>-NN`.
-- Mỗi case: Requirement (`R-xx`) · Module · Tầng · Input · Steps · Expected (từ spec) · `Status` (draft→approved) · `Test status` (untested→passed/failed) · `Test ref`.
+- Test case gom theo **module**, viết **dạng BẢNG** (mỗi dòng 1 case): `.context/test-cases/<module>.md`, id `TC-<module>-NN`.
+- Mỗi cột bảng: ID · Requirement (`R-xx`) · Tầng · Input · Steps · Expected (từ spec) · `Status` (draft→approved) · `Test status` (untested→passed/failed) · `Test ref`.
+- 📌 **Task mới cần test**: cùng **module đã có → UPDATE FILE CŨ** (thêm dòng vào bảng, số TC tiếp theo); module **mới → TẠO FILE MỚI** `<module>.md`. 1 module = 1 file, không tạo file trùng.
 - Trạng thái task: `.context/test-tasks.json` (module → cases; biết case nào **chưa test**).
 - Test code chỉ được sinh **sau khi** test case `approved` — và phải gắn `TC-xx`.
 
@@ -61,7 +62,7 @@ Vào `/autotest` → đọc spec → lấy task **chưa test** (`test-tasks.json
 
 | Bước | Làm gì | Output |
 |---|---|---|
-| A. Tạo test case | `test-case-author` soạn `TC-xx` từ `R-xx` mới, gom theo module, `Status: draft` | `.context/test-cases/<module>.md` + `.context/test-tasks.json` |
+| A. Tạo test case | `test-case-author` soạn `TC-xx` từ `R-xx` mới, **dạng bảng**, gom theo module, `Status: draft`; cùng module → update file cũ (thêm dòng), module mới → tạo file mới | `.context/test-cases/<module>.md` + `.context/test-tasks.json` |
 | B. ⛔ Human checkpoint | **DỪNG**, user sửa/chốt test case (`approved`) | test case `approved` |
 | C. Test code + chạy ngầm | `test-writer` hiện thực hoá đúng test case → chạy headless → log bug | `.context/test-results/headless-run.json` (+ `bugs.md`) |
 | D. Chạy browser từng case | list task theo module → đi **từng case 1**, browser headed bung hẳn, giữ mở; xong 1 case **chờ user chọn case tiếp** | `.context/test-results/browser-run.json` |
