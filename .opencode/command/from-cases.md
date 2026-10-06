@@ -1,4 +1,4 @@
-# /from-cases — Test theo test case do USER tạo (luồng 5)
+# /from-cases — Test theo test case do USER tạo (nhánh sinh test)
 
 Chuyển bộ test case user/khách đưa (Excel/MD/sheet/checklist) thành auto test.
 

@@ -1,6 +1,6 @@
 ---
 name: test-scope-contract
-description: "Hợp đồng bàn giao test-scope (.spec-cache/spec/test-scope/current.json) giữa template DEV (sinh sau khi sửa code) và template AUTOTEST (đọc để biết cần test gì) — có specVersion + scopeVersion để test biết đang cover đến đâu. Dùng khi /test-scope, /regression, hoặc cần biết phạm vi test sau thay đổi."
+description: "Hợp đồng bàn giao test-scope (.spec-cache/spec/test-scope/current.json) giữa template DEV (sinh sau khi sửa code) và template AUTOTEST (đọc để biết cần test gì) — có specVersion + scopeVersion để test biết đang cover đến đâu. Dùng khi chạy /autotest hoặc cần biết phạm vi test sau thay đổi."
 ---
 
 # Test Scope Contract (DEV ⇄ AUTOTEST) — versioned
@@ -12,7 +12,7 @@ Hợp đồng để template DEV báo cho template AUTOTEST **cần test cái g�
 | Vai | Ai | Khi nào | Ghi vào |
 |---|---|---|---|
 | **Producer** | template DEV (`builder`, sau bug fix / feature) | cuối mỗi lần sửa | `.spec-cache/spec/test-scope/current.json` |
-| **Consumer** | template AUTOTEST (`scope-planner` + commands) | `/test-scope`, `/regression` | đọc file trên + ghi `.context/test-status.json` |
+| **Consumer** | template AUTOTEST (`scope-planner` + `/autotest`) | giai đoạn 0 của `/autotest` | đọc file trên + ghi `.context/test-status.json` (ở giai đoạn 3) |
 
 ## Vị trí & schema
 
@@ -32,21 +32,14 @@ Template TEST ghi `.context/test-status.json`:
   "pendingSpecVersion": null
 }
 ```
-**Quy tắc:** `.spec-cache/SPECIFICATIONS.md` version > `specVersionCovered` → còn phần spec mới chưa cover → chạy `/test-scope` (nếu có scope) hoặc `/autotest --full` (mốc lớn).
+**Quy tắc:** `.spec-cache/SPECIFICATIONS.md` version > `specVersionCovered` → còn phần spec mới chưa cover → chạy `/autotest`.
 
 ## Cách AUTOTEST dùng
 
-1. `/test-scope`: đọc `.spec-cache/spec/test-scope/current.json` → test `direct` + `dependents` + `acceptance`
-2. `/regression`: chạy lại test đã có cho `regression` + `dependents`
-3. `risk: high` → bắt buộc mutation verify + mở rộng phạm vi; `low` → scope hẹp
-4. Sau khi xong → cập nhật `.context/test-status.json`
+**`/autotest` (luồng duy nhất)** — giai đoạn 0 đọc `.spec-cache/spec/test-scope/current.json` để xác định phạm vi ưu tiên:
+- `impact.direct` → sinh test mới / cập nhật test cũ
+- `impact.dependents` → test lại (bổ sung nếu thiếu)
+- `impact.regression` → chạy lại test đã có
+- `acceptance` → mỗi tiêu chí ≥1 test
 
-## Nếu thiếu / stale
-- Không có file → hỏi: "chạy full hay chỉ module X?" (không tự đoán rộng)
-- `scopeVersion` đã cover (trong test-status) → không test lại, báo đã cover
-- File cũ hơn spec version → cảnh báo stale, đề nghị dev sinh lại
-
-## Validate
-- `specRefs` phải tồn tại trong `.spec-cache/SPECIFICATIONS.md`
-- `changed.files` phải là file thật trong repo
-- Thiếu `acceptance` → nhắc dev bổ sung
+Sau đó chạy ngầm (headless, chỉ lưu log) → autotest browser (headed, giữ browser mở) → cập nhật tiến độ.

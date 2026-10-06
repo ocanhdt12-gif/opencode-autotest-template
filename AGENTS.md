@@ -2,19 +2,17 @@
 
 Entry point mọi session. Phân loại intent rồi route.
 
-## 5 luồng test (xem `docs/FLOWS.md`)
+## Luồng chạy DUY NHẤT (xem `docs/FLOWS.md`)
 
 | User nói | Route |
 |---|---|
-| "code xong rồi, test hết đi" | **`/autotest --full`** — luồng 1 (toàn bộ spec) |
-| "vừa fix/update, test phần này" | **`/test-scope`** — luồng 2 (đọc test-scope.json từ dev) |
-| "test lại luồng cũ / có vỡ không" | **`/regression`** — luồng 3 |
-| "case này test tay xong rồi" | **`/capture-manual`** — luồng 4 |
-| "test theo case anh/khách đưa" | **`/from-cases`** — luồng 5 |
+| "test đi" / "code xong rồi test hết đi" / "vừa fix/update, test phần này" / "test lại xem có vỡ không" | **`/autotest`** — luồng duy nhất: chạy ngầm (headless) trước → autotest browser (headed, bung hẳn ra) → cập nhật tiến độ |
+| "chỉ chạy nhanh cho biết kết quả" | **`/autotest --no-browser`** — chỉ chạy ngầm (headless) |
+| "case này test tay xong rồi" | **`/capture-manual`** — nhánh C: case tay → auto test |
+| "test theo case anh/khách đưa" | **`/from-cases`** — nhánh: bám test case user |
 | "khóa behavior code cũ / refactor an toàn" | **`/characterize <path>`** — nhánh B |
 | "kiểm tra chất lượng test trước merge" | **`/verify-tests`** |
-| "đã test đến đâu / còn gì chưa test" | **`/coverage`** (chỉ xem) — board tiến độ `.context/coverage.json` **tự cập nhật** cuối mỗi luồng |
-| "bổ sung vào bộ test hoàn chỉnh" | **TỰ ĐỘNG** — cuối mọi luồng tự kiểm tra trùng rồi ghi `test-registry.json` + board (không gõ command) |
+| "đã test đến đâu / còn gì chưa test" | **`/coverage`** (chỉ xem) — board tiến độ `.context/coverage.json` **tự cập nhật** sau khi browser test xong |
 | "test fail vì sao" | test-reflector phân loại → sửa test hoặc báo loop agent |
 | review/check | reviewer (nếu dự án có) |
 
@@ -26,10 +24,11 @@ Entry point mọi session. Phân loại intent rồi route.
 5. Check `.context/manual-cases/` — case manual chưa chuyển auto
 
 ## Quy tắc nền
+- ⭐ **`/autotest` là luồng chạy duy nhất**: (1) chạy ngầm headless trước cho nhanh → (2) autotest browser **headed** (bung hẳn ra) cho user theo dõi → cuối cùng **lưu kết quả + GIỮ browser mở**; (3) **cập nhật tiến độ chỉ sau khi browser xong** — chạy ngầm chỉ lưu log
 - Spec = link git tới `.spec-cache/` (KHÔNG lưu bản riêng — tránh lệch)
 - Mọi test → traceability về spec (`test-validator`) hoặc case user/manual
 - Test-scope là hợp đồng từ dev; thiếu → hỏi, không tự đoán rộng
-- ⭐ **1 bộ test hoàn chỉnh**: mọi luồng test đều bổ sung/cập nhật vào cùng bộ (`tests/` + `test-registry.json`) để retest cũ + test mới — không tạo suite song song; cuối mọi luồng **tự động** đăng ký + **cập nhật tiến độ test** (kiểm tra trùng trước), không cần command
+- ⭐ **1 bộ test hoàn chỉnh**: mọi test đều bổ sung/cập nhật vào cùng bộ (`tests/` + `test-registry.json`) — không tạo suite song song; cuối luồng **tự động** đăng ký + **cập nhật tiến độ test** (kiểm tra trùng trước), không cần command
 - **Spec chỉ đọc từ link** (`.spec-cache/`, read-only); test chỉ giữ **tiến độ test** — không tạo/sinh/sửa spec
 - Mọi fail → test-reflector phân loại → sửa đúng chỗ
 - Không merge nếu chưa `/verify-tests` pass

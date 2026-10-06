@@ -2,14 +2,24 @@
 
 > ⚠️ **Maintenance-mode override:** state dùng `features[]`/`bugs[]`; **cấm push thẳng `forbidden_branch`** (mặc định `main`); branch/push model: staging-direct (cấu hình trong `PROJECT_PROFILE.md`).
 
+## Luồng chạy test DUY NHẤT — `/autotest`
+
+Mọi lần test đều đi qua **1 luồng duy nhất** `/autotest`, gồm 3 giai đoạn:
+1. **Chạy NGẦM (headless)** — chạy suite như bình thường, **không bung browser**, cho nhanh → **chỉ lưu log** `.context/test-results/headless-run.json`
+2. **Autotest BROWSER (headed)** — **bung browser thật** cho user theo dõi thao tác; cuối cùng **lưu kết quả** + **GIỮ browser mở** để lại màn hình kết quả
+3. **Cập nhật tiến độ (tự động, chỉ sau bước 2)** — registry + coverage + test-status
+
+Chi tiết: `.opencode/command/autotest.md` + `docs/FLOWS.md`.
+
 ## Workflow chính (test-first — mỗi feature/task)
 
 1. **Spec**: đọc `.spec-cache/SPECIFICATIONS.md` → xác định requirement `R-xx` liên quan → spec-validator đảm bảo spec PASS
-2. **Test trước** (`/autotest`): test-writer viết test từ spec (unit + property-based), traceable `R-xx`
+2. **Test trước**: test-writer viết test từ spec (unit + property-based), traceable `R-xx`
 3. **Verify ĐỎ**: chạy test → phải fail đúng cách (chưa có code) — không red = test sai
 4. **Code**: implement tới khi test XANH (có thể dùng template dev để code)
 5. **Verify chất lượng** (`/verify-tests`): mutation testing + quality gate + hidden stash → PASS mới merge
-6. **Error flow**: test fail → test-reflector phân loại (bug-test / bug-code) → sửa đúng chỗ (test sai sửa test, code sai báo loop agent fix)
+6. **Chạy `/autotest`**: ngầm (headless) → browser (headed, giữ mở) → cập nhật tiến độ
+7. **Error flow**: test fail → test-reflector phân loại (bug-test / bug-code) → sửa đúng chỗ
 
 ## Workflow characterization (legacy chưa test)
 
@@ -34,6 +44,7 @@
 | quality gate | `/verify-tests` | expected từ code, try-catch nuốt, assert trivially |
 | hidden stash | `/verify-tests` + CI | test ẩn fail |
 | test traceability | test-validator | requirement R-xx không có test |
+| browser headed + giữ mở | `/autotest` giai đoạn 2 | chạy headless / tự đóng browser |
 
 ## Lỗi test (xử lý nội bộ)
 

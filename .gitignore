@@ -9,3 +9,4 @@ coverage/
 .context/review-reports/
 tests/hidden/__stash__.md.spec-cache/
 .spec-cache/
+.context/test-results/

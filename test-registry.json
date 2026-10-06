@@ -1,5 +1,5 @@
 {
-  "_comment": "Manifest của BỘ TEST HOÀN CHỈNH (repo TEST). Mọi luồng test TỰ ĐỘNG ghi vào đây khi chạy xong (kiểm tra trùng trước) — test mới/cập nhật append vào bộ duy nhất này, không tạo suite song song, không cần gõ command. Retest (luồng 3) + test feature mới đều bám file này.",
+  "_comment": "Manifest của BỘ TEST HOÀN CHỈNH (repo TEST). TỰ ĐỘNG ghi vào đây SAU KHI browser test (/autotest giai đoạn 2) chạy xong (kiểm tra trùng trước) — test mới/cập nhật append vào bộ duy nhất này, không tạo suite song song, không cần gõ command. Chạy ngầm (headless) chỉ lưu log, không ghi ở đây.",
   "updatedAt": null,
   "tests": []
 }

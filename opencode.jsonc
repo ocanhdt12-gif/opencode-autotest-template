@@ -39,6 +39,7 @@
     "uv run pytest*": "allow",
     "npx vitest*": "allow",
     "npx stryker*": "allow",
+    "npx playwright*": "allow",
     "mutmut*": "allow"
   },
 

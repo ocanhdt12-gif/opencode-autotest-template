@@ -27,7 +27,7 @@ Sinh test suite từ `.spec-cache/SPECIFICATIONS.md` TRƯỚC khi code tồn t�
 ## Output
 - Test files (đặt theo convention repo: `tests/` hoặc cạnh code) — **append vào bộ test hoàn chỉnh**, không dựng suite riêng
 - `.context/test-plan.md` — mapping test ↔ requirement id (traceable)
-- Ghi test mới vào `test-registry.json` (TỰ ĐỘNG cuối luồng, origin=full/test-scope)
+- Ghi test mới vào `test-registry.json` (TỰ ĐỘNG sau khi browser test xong, origin=autotest)
 
 ## Gate
 - [ ] Mọi requirement R-xx có ≥1 test

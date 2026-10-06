@@ -22,7 +22,7 @@ Template TEST **không lưu spec** — trỏ tới folder spec trong repo DEV (1
 
 ## Flow (sync)
 1. `git -C .spec-cache pull --ff-only`
-2. Đọc `spec_version` mới → so `.context/test-status.json` → còn phần chưa cover → gợi ý `/test-scope` / `/autotest --full`
+2. Đọc `spec_version` mới → so `.context/test-status.json` → còn phần chưa cover → gợi ý chạy `/autotest`
 
 ## Rule
 - KHÔNG copy spec vào repo test (tránh lệch) — chỉ cache tạm
