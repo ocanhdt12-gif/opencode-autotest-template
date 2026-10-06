@@ -2,20 +2,36 @@
 
 > Template xử lý bài toán: **sinh + duy trì auto test**. Match với template dev: **SPEC là cái chung** — nhưng test **không lưu spec**, chỉ **link git** (`spec-source.json` → `.spec-cache/`).
 
-> ⭐ **Một luồng chạy duy nhất — `/autotest`**: chạy **ngầm (headless) 1 lượt trước** cho nhanh → rồi chạy **autotest với browser (headed, bung hẳn ra)** để user theo dõi thao tác → cuối cùng **lưu kết quả + GIỮ browser mở** cho user xem màn hình kết quả. Chỉ **sau khi browser xong** mới **cập nhật tiến độ test**; chạy ngầm chỉ **lưu log**.
+> ⭐ **2 lệnh độc lập:**
+> - **`/autotest`** — test tính năng **MỚI**: check spec → **tạo test case cho spec mới** → chạy ngầm (headless) → autotest browser (headed, bung hẳn) → cập nhật tiến độ. **Không retest luồng cũ.**
+> - **`/retest`** — **chạy lại** test đã có: `--full` (toàn bộ) hoặc `<feature>` (1 chức năng). **Không tạo test mới.**
+>
+> Cả 2 dùng chung cơ chế chạy: **ngầm (headless) trước** → **browser (headed, bung hẳn, giữ mở)** sau → **cập nhật tiến độ chỉ sau khi browser xong**; chạy ngầm chỉ **lưu log**.
 
 > ⭐ **Một bộ test hoàn chỉnh:** mọi test đều nuôi **1 bộ duy nhất** (`tests/` + `test-registry.json`) — vừa retest tính năng cũ, vừa test feature mới. Không tạo suite song song.
 
-## Luồng chạy DUY NHẤT — `/autotest` (xem chi tiết `docs/FLOWS.md`)
+## 2 lệnh độc lập (xem chi tiết `docs/FLOWS.md`)
+
+### `/autotest` — test tính năng MỚI (có tạo test case)
 
 | # | Giai đoạn | Làm gì | Output |
 |---|---|---|---|
-| 0 | Chuẩn bị | `/spec-link --sync` + đọc `.spec-cache/spec/test-scope/current.json` → xác định phạm vi ưu tiên (direct/dependents/regression/acceptance) | phạm vi test |
-| 1 | **Chạy NGẦM** (headless) | Chạy test suite như bình thường, **KHÔNG bung browser** — cho nhanh | `.context/test-results/headless-run.json` (**chỉ lưu log**) |
-| 2 | **Autotest BROWSER** (headed) | **Bung browser thật**, user theo dõi thao tác; cuối cùng **lưu kết quả + GIỮ browser mở** | `.context/test-results/browser-run.json` |
-| 3 | **Cập nhật tiến độ** (TỰ ĐỘNG) | Kiểm tra trùng → ghi registry + cập nhật coverage/test-status — **CHỈ sau Giai đoạn 2** | `test-registry.json` + `.context/coverage.json` + `.context/test-status.json` |
+| 0 | Chuẩn bị | `/spec-link --sync` + đọc test-scope → xác định phạm vi mới | phạm vi test |
+| 1 | **Tạo test case** | Check spec → `test-writer` sinh test cho `R-xx` **mới/chưa có test** | `.context/test-plan.md` |
+| 2 | **Chạy NGẦM** (headless) | Chạy test phần mới, **KHÔNG bung browser** — cho nhanh | `.context/test-results/headless-run.json` (**chỉ lưu log**) |
+| 3 | **Autotest BROWSER** (headed) | **Bung browser thật**, user theo dõi; cuối cùng **lưu kết quả + GIỮ browser mở** | `.context/test-results/browser-run.json` |
+| 4 | **Cập nhật tiến độ** (TỰ ĐỘNG) | Kiểm tra trùng → ghi registry + coverage/test-status — **CHỈ sau Giai đoạn 3** | `test-registry.json` + `.context/coverage.json` + `.context/test-status.json` |
 
-## Nhánh sinh test (bổ trợ — test sinh ra sẽ chạy qua luồng `/autotest`)
+### `/retest` — chạy LẠI test đã có (không tạo test mới)
+
+| Cách dùng | Phạm vi |
+|---|---|
+| `/retest --full` | toàn bộ test trong `tests/` (theo `test-registry.json`) |
+| `/retest <feature\|module>` | 1 chức năng/module (lọc theo tag/module) |
+
+Cùng cơ chế chạy: ngầm (headless) → browser (headed, giữ mở) → cập nhật `status`/`lastRunAt`. **Không sinh test mới** — muốn tạo test mới dùng `/autotest`.
+
+## Nhánh sinh test (bổ trợ — test sinh ra sẽ chạy qua `/autotest`)
 
 | Nhánh | Input | Output | Agent |
 |---|---|---|---|
@@ -34,33 +50,34 @@ Template DEV sinh `.spec-cache/spec/test-scope/current.json` (có `specVersion`+
 .spec-cache/SPECIFICATIONS.md (chung với template dev)
       │  spec-validator PASS
       ▼
-/autotest  ── luồng DUY NHẤT
+/autotest  ── tính năng MỚI (có tạo test case)
       │
-      ├── (0) sync spec + đọc test-scope (phạm vi ưu tiên)
-      │
-      ├── (1) CHẠY NGẦM (headless, KHÔNG browser)
-      │        └── lưu .context/test-results/headless-run.json  (chỉ log, KHÔNG cập nhật tiến độ)
-      │
-      ├── (2) AUTOTEST BROWSER (headed, BUNG HẲN ra)
-      │        └── user theo dõi thao tác
-      │        └── cuối cùng: lưu kết quả + GIỮ browser mở  → browser-run.json
-      │
-      └── (3) CẬP NHẬT TIẾN ĐỘ (TỰ ĐỘNG, chỉ sau bước 2)
-               └── test-registry.json + .context/coverage.json + .context/test-status.json
-                    (⬆ luôn có 1 bộ test hoàn chỉnh để retest; không cần gõ command)
+      ├── (0) sync spec + đọc test-scope
+      ├── (1) TẠO TEST CASE từ spec mới (test-writer)  → test-plan.md
+      ├── (2) CHẠY NGẦM (headless, KHÔNG browser)      → headless-run.json  (chỉ log)
+      ├── (3) AUTOTEST BROWSER (headed, giữ mở)        → browser-run.json
+      └── (4) CẬP NHẬT TIẾN ĐỘ (tự động, chỉ sau bước 3)
+
+/retest  ── chạy LẠI test đã có (KHÔNG tạo test mới)
+      ├── --full | <feature>
+      ├── chạy ngầm (headless) → browser (headed, giữ mở)
+      └── cập nhật status/lastRunAt
+
+         └────────► 📦 BỘ TEST HOÀN CHỈNH (tests/ + test-registry.json)
 ```
 
 ## Gate bắt buộc
 
 1. `spec-validator` PASS trước khi sinh test
-2. Test-first: test **ĐỎ đúng cách** trước khi code
-3. Characterization: **mutation check bắt được**
-4. Manual→Auto / từ-cases: test xanh, assert thật, không ép tự động hóa case cần người
-5. `verify-tests`: mutation score ≥ ngưỡng + quality gate + hidden stash
-6. Mọi fail → test-reflector phân loại → sửa đúng chỗ
-7. **Browser LUÔN headed** khi chạy autotest; cuối luồng **GIỮ browser mở** (không close)
-8. **Tiến độ chỉ cập nhật sau giai đoạn browser** — chạy ngầm chỉ lưu log
-9. **Spec chỉ ĐỌC từ link** (`.spec-cache/`, read-only) — test KHÔNG tạo/sinh/sửa spec; test chỉ giữ **tiến độ test** của chính nó
+2. `/autotest`: **tạo test case cho mọi `R-xx` mới trước khi chạy**
+3. Test-first: test **ĐỎ đúng cách** trước khi code
+4. Characterization: **mutation check bắt được**
+5. Manual→Auto / từ-cases: test xanh, assert thật, không ép tự động hóa case cần người
+6. `verify-tests`: mutation score ≥ ngưỡng + quality gate + hidden stash
+7. Mọi fail → test-reflector phân loại → sửa đúng chỗ
+8. **Browser LUÔN headed** khi chạy test; cuối luồng **GIỮ browser mở** (không close)
+9. **Tiến độ chỉ cập nhật sau giai đoạn browser** — chạy ngầm chỉ lưu log
+10. **Spec chỉ ĐỌC từ link** (`.spec-cache/`, read-only) — test KHÔNG tạo/sinh/sửa spec
 
 ## Conventions
 

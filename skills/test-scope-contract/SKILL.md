@@ -36,7 +36,7 @@ Template TEST ghi `.context/test-status.json`:
 
 ## Cách AUTOTEST dùng
 
-**`/autotest` (luồng duy nhất)** — giai đoạn 0 đọc `.spec-cache/spec/test-scope/current.json` để xác định phạm vi ưu tiên:
+**`/autotest` (test tính năng MỚI)** — giai đoạn 0 đọc `.spec-cache/spec/test-scope/current.json` để xác định phạm vi ưu tiên:
 - `impact.direct` → sinh test mới / cập nhật test cũ
 - `impact.dependents` → test lại (bổ sung nếu thiếu)
 - `impact.regression` → chạy lại test đã có
