@@ -9,12 +9,13 @@ Sinh test code **từ test case `approved`** (xem `skills/test-case-first`). Tes
 ## Input
 - `.context/test-cases/<module>.md` — **test case đã `approved`** (nguồn chính; mỗi case có Input/Steps/Expected)
 - `.spec-cache/SPECIFICATIONS.md` — requirement gốc (`R-xx`) để đối chiếu
-- `.agent/PROJECT_PROFILE.md` — stack/test framework (vitest? pytest?)
+- `.agent/PROJECT_PROFILE.md` — stack/test framework (vitest? pytest?) + `web_app_url` (baseURL cho test browser/E2E)
 
 ## Quy trình
 
 1. **Đọc test case `approved`** → mỗi case là 1 test cần viết. Còn case `draft` → **dừng, báo user chốt trước**.
 2. **Chọn framework** theo PROJECT_PROFILE: TS → Vitest · Python → pytest (+ Hypothesis cho property)
+   - Test browser/E2E: dùng `web_app_url` (PROJECT_PROFILE) làm **baseURL** — KHÔNG hardcode localhost; nếu chưa có → báo user điền trước khi viết E2E
 3. **Viết test code hiện thực hoá đúng test case** — KHÔNG đọc file implementation (nếu file đã tồn tại → báo, không tự "điều chỉnh" expected theo code)
 4. Mỗi test gắn id test case: `TC-<module>-NN` (+ `R-xx`); tên test phản ánh hành vi
 5. Test phải có **khả năng bất đồng với code**:

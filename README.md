@@ -38,13 +38,14 @@ Template test **không lưu spec** — chỉ trỏ tới folder spec trong repo 
 
 **Lần đầu:**
 1. **Config spec** — chưa link thì hỏi `/spec-link <git-url>`
-2. **Đọc spec + nêu overview** — spec version, các module, danh sách `R-xx`, phần chưa có test
-3. **Brainstorm câu hỏi** — chỗ spec mơ hồ (expected, edge case, ưu tiên) → hỏi user
-4. **Tạo TEST CASE** (`TC-<module>-NN`) gom theo module → `.context/test-cases/<module>.md`, `Status: draft` — **dạng bảng** (mỗi dòng 1 case); task mới: cùng module → **update file cũ** (thêm dòng), module mới → **tạo file mới**
-5. ⛔ **Chờ user sửa + update test case** → chốt (`Status: approved`)
-6. **Chạy ngầm (headless)** theo test case → `headless-run.json` + **log bug ra file** nếu có
-7. **Chạy browser TỪNG CASE** (headed, bung hẳn ra) — gom theo module, mỗi lần 1 case, xong **giữ browser mở** và **chờ user chọn case tiếp**
-8. **Cập nhật trạng thái task** đã test → lần sau không test lại
+2. **Config web URL** — chưa có `web_app_url` thì hỏi **link deploy web** (vd `https://staging.example.com`) → điền `.agent/PROJECT_PROFILE.md` — đây là **baseURL** cho test browser/E2E
+3. **Đọc spec + nêu overview** — spec version, các module, danh sách `R-xx`, phần chưa có test
+4. **Brainstorm câu hỏi** — chỗ spec mơ hồ (expected, edge case, ưu tiên) → hỏi user (kèm link deploy web nếu chưa có)
+5. **Tạo TEST CASE** (`TC-<module>-NN`) gom theo module → `.context/test-cases/<module>.md`, `Status: draft` — **dạng bảng** (mỗi dòng 1 case); task mới: cùng module → **update file cũ** (thêm dòng), module mới → **tạo file mới**
+6. ⛔ **Chờ user sửa + update test case** → chốt (`Status: approved`)
+7. **Chạy ngầm (headless)** theo test case → `headless-run.json` + **log bug ra file** nếu có
+8. **Chạy browser TỪNG CASE** (headed, bung hẳn ra) — gom theo module, mỗi lần 1 case, xong **giữ browser mở** và **chờ user chọn case tiếp**
+9. **Cập nhật trạng thái task** đã test → lần sau không test lại
 
 **Các lần sau:** `/autotest` → đọc spec → lấy task **chưa test** → tạo test case → chạy lại luồng trên.
 

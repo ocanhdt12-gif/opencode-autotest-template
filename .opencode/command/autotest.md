@@ -13,8 +13,11 @@
 ## LẦN ĐẦU (chưa link spec)
 1. **Hỏi config spec**: chưa có link → yêu cầu `/spec-link <git-url>` (hỏi, không tự bịa spec).
    - Sau khi link xong, các lần chạy sau **tự sync** — KHÔNG cần gõ `/spec-link --sync` thủ công.
-2. **Đọc spec + nêu overview**: spec version, các module, danh sách `R-xx`, phần chưa có test.
-3. **Brainstorm câu hỏi cần hỏi**: chỗ spec mơ hồ (expected, edge case, ưu tiên) → hỏi user.
+2. **Hỏi link deploy web**: chưa có `web_app_url` trong `.agent/PROJECT_PROFILE.md` → hỏi user link deploy
+   (vd `https://staging.example.com`) → điền vào `web_app_url`. Đây là **baseURL** cho test browser/E2E —
+   thiếu thì bước D (browser) không chạy được; cũng hỏi luôn trong brainstorm khi còn mơ hồ.
+3. **Đọc spec + nêu overview**: spec version, các module, danh sách `R-xx`, phần chưa có test.
+4. **Brainstorm câu hỏi cần hỏi**: chỗ spec mơ hồ (expected, edge case, ưu tiên) → hỏi user.
 4. **Tạo test case** (xem bước A bên dưới).
 
 ## CÁC LẦN SAU

@@ -47,13 +47,14 @@ Mọi test đều nuôi **1 bộ duy nhất** trong repo — vừa **retest tín
 
 ### Lần đầu
 1. **Config spec** — chưa link → hỏi `/spec-link <git-url>`
-2. **Đọc spec + overview** — spec version, modules, `R-xx`, phần chưa test
-3. **Brainstorm câu hỏi** — spec mơ hồ (expected, edge, ưu tiên) → hỏi user
-4. **Tạo test case** (draft, gom theo module)
-5. ⛔ **User check & update** → chốt `approved`
-6. **Sinh test code theo test case → chạy NGẦM (headless)** → log bug ra file
-7. **Chạy BROWSER TỪNG CASE** (headed, giữ mở) → user chọn case tiếp
-8. **Cập nhật trạng thái task**
+2. **Config web URL** — chưa có `web_app_url` → hỏi **link deploy web** (baseURL browser) + điền PROJECT_PROFILE
+3. **Đọc spec + overview** — spec version, modules, `R-xx`, phần chưa test
+4. **Brainstorm câu hỏi** — spec mơ hồ (expected, edge, ưu tiên) → hỏi user (kèm link deploy web nếu chưa có)
+5. **Tạo test case** (draft, gom theo module)
+6. ⛔ **User check & update** → chốt `approved`
+7. **Sinh test code theo test case → chạy NGẦM (headless)** → log bug ra file
+8. **Chạy BROWSER TỪNG CASE** (headed, giữ mở) → user chọn case tiếp
+9. **Cập nhật trạng thái task**
 
 ### Các lần sau
 Vào `/autotest` → đọc spec → lấy task **chưa test** (`test-tasks.json`) → tạo test case → chạy luồng bước 4–8.

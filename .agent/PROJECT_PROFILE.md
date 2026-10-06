@@ -6,6 +6,7 @@
 - **stack_family:** web | mobile | backend | ai — (trống)
 - **test_framework:** vitest | pytest | jest | e2e — mặc định `vitest` (TS) + `pytest` (Python)
 - **browser_framework:** playwright (mặc định — E2E, mở browser thật + giữ cửa sổ mở cuối case)
+- **web_app_url:** (trống — link deploy web để test browser, vd https://staging.example.com. **HỎI ở brainstorm lần đầu** — baseURL cho E2E/browser, thiếu thì bước browser không chạy được)
 - **browser_headless_first:** true (chạy ngầm headless 1 lượt trước, rồi mới chạy browser headed)
 - **browser_case_by_case:** true (chạy browser TỪNG CASE 1, gom theo module, xong 1 case chờ user chọn case tiếp)
 - **keep_browser_open:** true (cuối mỗi case KHÔNG đóng browser — để lại màn hình kết quả cho user)
@@ -26,5 +27,6 @@
 
 ## Bắt buộc khi khởi tạo
 1. `/spec-link <git-url>` — link folder spec của repo DEV (spec KHÔNG lưu ở đây)
+2. Hỏi **link deploy web** → điền `web_app_url` (baseURL cho test browser/E2E)
 2. Chạy spec-validator PASS trước khi sinh test case
 3. Khởi tạo `tests/` + `.context/test-cases/` + `.context/test-tasks.json` + `.context/test-results/` + `.context/manual-cases/` + `tests/hidden/` + `test-registry.json`

@@ -9,8 +9,9 @@
 
 **Lần đầu:**
 1. **Config spec** — chưa link → `/spec-link <git-url>`
-2. **Đọc spec + overview** — spec version, modules, `R-xx`, phần chưa test
-3. **Brainstorm câu hỏi** — spec mơ hồ → hỏi user
+2. **Config web URL** — chưa có `web_app_url` (`.agent/PROJECT_PROFILE.md`) → hỏi **link deploy web** (baseURL browser) + điền
+3. **Đọc spec + overview** — spec version, modules, `R-xx`, phần chưa test
+4. **Brainstorm câu hỏi** — spec mơ hồ → hỏi user
 4. **Tạo test case** (draft, gom theo module) — `test-case-author`
 5. ⛔ **User check & update** → chốt `approved` (HUMAN CHECKPOINT, không được bỏ)
 6. **Sinh test code theo test case** → chạy **NGẦM (headless)** → log bug ra file

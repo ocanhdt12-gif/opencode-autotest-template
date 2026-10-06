@@ -16,7 +16,7 @@
 
 | # | Giai đoạn | Làm gì | Output |
 |---|---|---|---|
-| 0 | (Lần đầu) Config + spec | Hỏi `/spec-link` nếu chưa link → đọc spec + nêu **overview** → **brainstorm câu hỏi** cần hỏi | — |
+| 0 | (Lần đầu) Config + spec | Hỏi `/spec-link` nếu chưa link → hỏi **link deploy web** (`web_app_url` → `.agent/PROJECT_PROFILE.md`, baseURL browser) → đọc spec + nêu **overview** → **brainstorm câu hỏi** cần hỏi | `web_app_url` có trong PROJECT_PROFILE |
 | A | **Tạo TEST CASE** (draft) | `test-case-author` soạn test case `TC-xx` từ `R-xx` mới, **gom theo module** | `.context/test-cases/<module>.md` + `.context/test-tasks.json` |
 | B | ⛔ **User check & update** | **DỪNG** — user sửa/chốt test case (`approved`) | test case `approved` |
 | C | Sinh test code + chạy **NGẦM** (headless) | `test-writer` hiện thực hoá đúng test case → chạy headless → **log bug ra file** | `.context/test-results/headless-run.json` (+ `bugs.md`) |
@@ -55,7 +55,7 @@ Template DEV sinh `.spec-cache/spec/test-scope/current.json` (có `specVersion`+
       ▼
 /autotest  ── tính năng MỚI (test-case-first)
       │
-      ├── (0) lần đầu: config spec + overview + brainstorm câu hỏi
+      ├── (0) lần đầu: config spec + link deploy web (web_app_url) + overview + brainstorm câu hỏi
       ├── (A) TẠO TEST CASE (gom theo module)        → .context/test-cases/<module>.md (draft)
       ├── (B) ⛔ user check & update → approved      ← human checkpoint
       ├── (C) sinh test code theo test case → chạy NGẦM (headless) → log bug
