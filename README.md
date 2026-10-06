@@ -24,11 +24,12 @@ npx opencode
 
 ### 0. Config spec (lần đầu) — nhập link git
 ```bash
-/spec-link git@github.com:org/dev-repo.git          # clone shallow folder spec về .spec-cache/
-/spec-link --sync                                   # pull spec mới nhất mỗi lần chạy
+/spec-link git@github.com:org/dev-repo.git          # clone shallow folder spec về .spec-cache/ (chỉ lần đầu)
 /spec-link --status                                 # xem đang link đâu, spec version nào
 ```
 Template test **không lưu spec** — chỉ trỏ tới folder spec trong repo DEV. Chưa link → `/autotest` sẽ **hỏi** (không tự bịa spec).
+
+> ⚙️ **Sync spec TỰ ĐỘNG:** từ lần thứ 2, spec được **tự pull** (`git -C .spec-cache pull --ff-only`) ngay khi bắt đầu `/autotest` hoặc `/retest` — **KHÔNG cần gõ `/spec-link --sync` thủ công**.
 
 ### 1. Test tính năng MỚI — `/autotest`
 ```bash

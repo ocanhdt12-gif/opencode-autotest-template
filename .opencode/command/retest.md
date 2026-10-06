@@ -12,6 +12,7 @@
 ```
 
 ## Flow
+0. ⚙️ **TỰ ĐỘNG sync spec** — `git -C .spec-cache pull --ff-only` ngay khi bắt đầu (KHÔNG cần gõ `/spec-link --sync`).
 1. **Chọn phạm vi**:
    - `--all` → toàn bộ test case đã có (theo `.context/test-tasks.json` + `test-registry.json`)
    - `<module|feature>` → lọc theo module/cụm chức năng
@@ -23,6 +24,7 @@
    - `test-reflector` phân loại fail (`bug-test` / `bug-code`); vỡ do thay đổi chủ đích → cập nhật test code theo test case (không sửa test case cho khớp code).
 
 ## Rule
+- ⚙️ **Sync spec TỰ ĐỘNG đầu mỗi lần chạy** — không cần gõ `/spec-link --sync`
 - **KHÔNG tạo test case/test mới** — chỉ chạy lại test **đã có** (đã approved)
 - Muốn sinh test cho spec/tính năng mới → dùng `/autotest`
 - Cùng cơ chế chạy: ngầm (headless) trước → browser (headed, giữ mở) sau

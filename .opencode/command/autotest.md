@@ -12,12 +12,14 @@
 
 ## LẦN ĐẦU (chưa link spec)
 1. **Hỏi config spec**: chưa có link → yêu cầu `/spec-link <git-url>` (hỏi, không tự bịa spec).
+   - Sau khi link xong, các lần chạy sau **tự sync** — KHÔNG cần gõ `/spec-link --sync` thủ công.
 2. **Đọc spec + nêu overview**: spec version, các module, danh sách `R-xx`, phần chưa có test.
 3. **Brainstorm câu hỏi cần hỏi**: chỗ spec mơ hồ (expected, edge case, ưu tiên) → hỏi user.
 4. **Tạo test case** (xem bước A bên dưới).
 
 ## CÁC LẦN SAU
-- Vào lệnh → đọc `.spec-cache/SPECIFICATIONS.md` + `test-scope` → lấy các **task/case CHƯA test** (đối chiếu `.context/test-tasks.json`) → tạo test case cho phần mới → chạy luồng y hệt bên dưới.
+- ⚙️ **TỰ ĐỘNG sync spec trước khi test** — chạy `git -C .spec-cache pull --ff-only` ngay khi vào lệnh (KHÔNG cần gõ `/spec-link --sync`). Cache hỏng/mất mạng → dùng cache cũ + cảnh báo "spec có thể cũ".
+- Đọc `.spec-cache/SPECIFICATIONS.md` + `test-scope` → lấy các **task/case CHƯA test** (đối chiếu `.context/test-tasks.json`) → tạo test case cho phần mới → chạy luồng y hệt bên dưới.
 
 ---
 
@@ -60,4 +62,5 @@
 - Chạy ngầm trước (headless, log bug) → browser sau (headed, user kiểm tra)
 - **Cập nhật trạng thái task sau khi chạy** → không test lại cái đã test
 - **KHÔNG retest toàn hệ thống** ở đây — việc đó thuộc `/retest`
+- ⚙️ **Sync spec TỰ ĐỘNG đầu mỗi lần chạy** — chạy `git -C .spec-cache pull --ff-only` (không cần gõ `/spec-link --sync`; chỉ lần đầu chưa link mới cần `/spec-link <git-url>`)
 - **Spec chỉ đọc từ link** (`.spec-cache/`, read-only)

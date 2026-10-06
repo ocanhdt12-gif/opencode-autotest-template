@@ -34,7 +34,7 @@ Entry point mọi session. Phân loại intent rồi route.
 - Trạng thái task ở `.context/test-tasks.json` → **không test lại cái đã test**.
 
 ## Mặc định khi session bắt đầu
-1. `/spec-link --sync` — pull spec mới nhất (nếu chưa link → hỏi link)
+1. ⚙️ **TỰ ĐỘNG sync spec** — `git -C .spec-cache pull --ff-only` (không cần gõ `/spec-link --sync`; chỉ lần đầu chưa link mới hỏi `/spec-link <git-url>`)
 2. Đọc `.spec-cache/SPECIFICATIONS.md` — nguồn truth
 3. Đọc `.context/test-tasks.json` — case nào đã/chưa test
 4. Chạy test suite hiện tại xem pass không (`npm test` / `pytest`)
@@ -44,6 +44,7 @@ Entry point mọi session. Phân loại intent rồi route.
 - ⭐ **TEST-CASE-FIRST**: test case do máy soạn (draft) → **user sửa & chốt** → mới sinh test code + chạy
 - ⭐ **2 lệnh**: `/autotest` (tạo test case mới + chạy phần mới) · `/retest` (chạy lại đã có — all/cụm/case)
 - ⭐ Cơ chế chạy chung: ngầm (headless) trước → browser (headed, bung hẳn, giữ mở) sau; browser đi **từng case**, xong chờ user chọn case tiếp; cập nhật trạng thái sau khi chạy
+- ⚙️ **Sync spec tự động** trước mỗi lần test (không gõ tay `/spec-link --sync`)
 - Spec = link git tới `.spec-cache/` (KHÔNG lưu bản riêng)
 - Mọi test → traceability `R-xx` ↔ `TC-xx` ↔ test code
 - Test-scope là hợp đồng từ dev; thiếu → hỏi, không tự đoán rộng
