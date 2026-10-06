@@ -1,6 +1,6 @@
-# /spec-link — Nhập link git folder spec (bắt đầu dự án test)
+# /spec-link — Config spec: nhập link git folder spec (bước đầu khi bắt đầu test)
 
-Template TEST **không lưu spec** — trỏ tới folder spec trong repo DEV (1 nguồn duy nhất, không lệch).
+Template TEST **không lưu spec** — trỏ tới folder spec trong repo DEV (1 nguồn duy nhất, không lệch). Là bước **config spec** đầu tiên của `/autotest` (chưa link → `/autotest` sẽ hỏi).
 
 ## Cách dùng
 ```
@@ -22,7 +22,7 @@ Template TEST **không lưu spec** — trỏ tới folder spec trong repo DEV (1
 
 ## Flow (sync)
 1. `git -C .spec-cache pull --ff-only`
-2. Đọc `spec_version` mới → so `.context/test-status.json` → còn phần chưa cover → gợi ý chạy `/autotest`
+2. Đọc `spec_version` mới → so `.context/test-status.json` → còn phần chưa cover → gợi ý chạy `/autotest` (tạo test case cho phần mới)
 
 ## Rule
 - KHÔNG copy spec vào repo test (tránh lệch) — chỉ cache tạm

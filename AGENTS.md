@@ -2,44 +2,52 @@
 
 Entry point mọi session. Phân loại intent rồi route.
 
-## 2 lệnh độc lập (xem `docs/FLOWS.md`)
+## 2 lệnh chính (xem `docs/FLOWS.md`)
 
 | User nói | Route |
 |---|---|
-| "test tính năng mới" / "spec mới, tạo test case đi" / "vừa update spec, làm test cho phần mới" | **`/autotest`** — check spec → **tạo test case cho spec mới** → chạy ngầm (headless) → autotest browser (headed, giữ mở) → cập nhật tiến độ. **KHÔNG retest luồng cũ.** |
-| "retest lại đi" / "chạy lại test xem còn xanh không" / "test lại toàn bộ" / "test lại chức năng X" | **`/retest --full`** (toàn bộ) hoặc **`/retest <feature>`** (1 chức năng) — chạy lại test **đã có**, KHÔNG tạo test mới |
-| "chỉ chạy nhanh cho biết kết quả" | thêm `--no-browser` vào `/autotest` hoặc `/retest` — chỉ chạy ngầm (headless) |
-| "case này test tay xong rồi" | **`/capture-manual`** — nhánh C: case tay → auto test |
+| "test tính năng mới" / "spec mới, tạo test case đi" / "bắt đầu test" | **`/autotest`** — lần đầu: hỏi config spec → overview → brainstorm → tạo test case → **chờ user chốt** → chạy ngầm → **chạy browser từng case** → cập nhật trạng thái. Lần sau: lấy task chưa test → tạo test case → chạy. |
+| "retest lại toàn bộ" / "retest 1 cụm chức năng" / "retest case X" | **`/retest --all`** · **`/retest <module>`** · **`/retest <TC-xx>`** — chạy lại test đã có, KHÔNG tạo mới |
+| "chỉ chạy nhanh cho biết kết quả" | thêm `--no-browser` vào `/autotest` hoặc `/retest` |
+| "case này test tay xong rồi" | **`/capture-manual`** — nhánh: case tay → auto test |
 | "test theo case anh/khách đưa" | **`/from-cases`** — nhánh: bám test case user |
 | "khóa behavior code cũ / refactor an toàn" | **`/characterize <path>`** — nhánh B |
 | "kiểm tra chất lượng test trước merge" | **`/verify-tests`** |
-| "đã test đến đâu / còn gì chưa test" | **`/coverage`** (chỉ xem) — board tiến độ `.context/coverage.json` **tự cập nhật** sau khi browser test xong |
-| "test fail vì sao" | test-reflector phân loại → sửa test hoặc báo loop agent |
+| "đã test đến đâu / còn gì chưa test" | **`/coverage`** (chỉ xem) — tiến độ tự cập nhật sau khi chạy |
+| "test fail vì sao" | test-reflector phân loại → sửa test/chỉ báo dev |
 | review/check | reviewer (nếu dự án có) |
 
 ## Phân biệt nhanh `/autotest` vs `/retest`
 
 | | `/autotest` | `/retest` |
 |---|---|---|
-| Mục đích | Test tính năng **MỚI** (spec mới) | **Chạy lại** test đã có |
-| Sinh test case? | ✅ **CÓ** (từ spec mới) | ❌ KHÔNG |
-| Phạm vi | phần mới (theo spec/test-scope) | `--full` hoặc 1 chức năng |
-| Dùng khi | spec vừa đổi / feature mới | muốn xác nhận còn xanh |
+| Mục đích | Test tính năng **MỚI** | **Chạy lại** test đã có |
+| Tạo test case? | ✅ CÓ (từ spec mới) | ❌ KHÔNG |
+| Phạm vi | phần mới (spec/test-scope) | `--all` / 1 cụm chức năng / 1 test case |
+| Dùng khi | spec mới / feature mới / bắt đầu test | xác nhận còn xanh |
+
+## ⭐ Luật trục: TEST-CASE-FIRST (`skills/test-case-first`)
+
+- **SPEC → TEST CASE (user check/sửa/chốt) → TEST CODE → chạy.** Mọi test phải follow test case.
+- Test case gom theo **module** ở `.context/test-cases/<module>.md`, id `TC-<module>-NN`, `Status: draft→approved`.
+- **User phải chốt test case trước khi chạy** (human checkpoint).
+- Trạng thái task ở `.context/test-tasks.json` → **không test lại cái đã test**.
 
 ## Mặc định khi session bắt đầu
-1. `/spec-link --sync` — pull spec mới nhất về `.spec-cache/` (nếu chưa link → hỏi link)
+1. `/spec-link --sync` — pull spec mới nhất (nếu chưa link → hỏi link)
 2. Đọc `.spec-cache/SPECIFICATIONS.md` — nguồn truth
-3. Đọc `.spec-cache/spec/test-scope/current.json` — scope mới từ dev; đối chiếu board `.context/coverage.json` (req nào chưa test)
+3. Đọc `.context/test-tasks.json` — case nào đã/chưa test
 4. Chạy test suite hiện tại xem pass không (`npm test` / `pytest`)
 5. Check `.context/manual-cases/` — case manual chưa chuyển auto
 
 ## Quy tắc nền
-- ⭐ **2 lệnh độc lập**: `/autotest` (tạo test case mới từ spec + chạy phần mới) và `/retest` (chạy lại test đã có — full hoặc 1 chức năng). Đừng retest tràn lan mỗi lần test feature mới.
-- ⭐ Cả 2 lệnh dùng **cùng cơ chế chạy**: (1) chạy ngầm headless trước cho nhanh → (2) autotest browser **headed** (bung hẳn ra) cho user theo dõi → cuối cùng **lưu kết quả + GIỮ browser mở**; (3) **cập nhật tiến độ chỉ sau khi browser xong** — chạy ngầm chỉ lưu log
-- Spec = link git tới `.spec-cache/` (KHÔNG lưu bản riêng — tránh lệch)
-- Mọi test → traceability về spec (`test-validator`) hoặc case user/manual
+- ⭐ **TEST-CASE-FIRST**: test case do máy soạn (draft) → **user sửa & chốt** → mới sinh test code + chạy
+- ⭐ **2 lệnh**: `/autotest` (tạo test case mới + chạy phần mới) · `/retest` (chạy lại đã có — all/cụm/case)
+- ⭐ Cơ chế chạy chung: ngầm (headless) trước → browser (headed, bung hẳn, giữ mở) sau; browser đi **từng case**, xong chờ user chọn case tiếp; cập nhật trạng thái sau khi chạy
+- Spec = link git tới `.spec-cache/` (KHÔNG lưu bản riêng)
+- Mọi test → traceability `R-xx` ↔ `TC-xx` ↔ test code
 - Test-scope là hợp đồng từ dev; thiếu → hỏi, không tự đoán rộng
-- ⭐ **1 bộ test hoàn chỉnh**: mọi test đều bổ sung/cập nhật vào cùng bộ (`tests/` + `test-registry.json`) — không tạo suite song song; cuối luồng **tự động** đăng ký + **cập nhật tiến độ test** (kiểm tra trùng trước), không cần command
-- **Spec chỉ đọc từ link** (`.spec-cache/`, read-only); test chỉ giữ **tiến độ test** — không tạo/sinh/sửa spec
-- Mọi fail → test-reflector phân loại → sửa đúng chỗ
+- ⭐ **1 bộ test hoàn chỉnh**: mọi test vào cùng bộ (`tests/` + `test-registry.json`) — không suite song song
+- **Spec chỉ đọc từ link** (read-only); test chỉ giữ **tiến độ test**
+- Mọi fail → test-reflector phân loại
 - Không merge nếu chưa `/verify-tests` pass

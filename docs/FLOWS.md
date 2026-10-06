@@ -1,155 +1,137 @@
 # FLOWS — Luồng chạy test (chuẩn hoá)
 
-> **2 lệnh độc lập:** **`/autotest`** = test tính năng **MỚI** (check spec → **tạo test case cho spec mới** → chạy ngầm → browser → cập nhật tiến độ); **`/retest`** = **chạy lại** test đã có (`--full` hoặc 1 chức năng, KHÔNG tạo test mới). Cả 2 dùng chung cơ chế: **chạy ngầm (headless) trước → browser (headed, giữ mở) sau → cập nhật tiến độ chỉ sau khi browser xong**.
+> **Luật trục — TEST-CASE-FIRST:** **SPEC → TEST CASE (user check/sửa/chốt) → TEST CODE → chạy.** Mọi test phải follow test case (`skills/test-case-first`).
+> **2 lệnh:** `/autotest` = test tính năng **MỚI** (có tạo test case); `/retest` = **chạy lại** test đã có (`--all` / cụm chức năng / 1 test case).
 
 ## ⭐ Một bộ test hoàn chỉnh (nguyên tắc gốc)
 
-**Mọi test đều phục vụ MỘT đích: nuôi bộ test hoàn chỉnh.** Chỉ có **1 bộ duy nhất** trong repo — vừa **retest tính năng cũ**, vừa **test feature mới**. Không có suite riêng cho từng lệnh.
+Mọi test đều nuôi **1 bộ duy nhất** trong repo — vừa **retest tính năng cũ**, vừa **test feature mới**. Không có suite riêng.
 
-- Đăng ký trung tâm: `tests/` (hoặc theo PROJECT_PROFILE) + `test-registry.json` (manifest mọi test + nguồn gốc).
-- Test mới **append/cập nhật** vào bộ này, ghi `origin` — không bao giờ tạo suite song song.
-- Retest = chạy lại đúng bộ này (theo `--full` hoặc tag/module); feature mới cũng vào cùng bộ.
-- `test-registry.json` + `.context/coverage.json` là 2 mặt của cùng bộ: cái nào tồn tại/đã chạy (board) · test nào đang giữ phần đó (`testRef`).
+- Đăng ký trung tâm: `tests/` + `test-registry.json` (manifest mọi test + nguồn gốc + `testCase`).
+- Test mới **append/cập nhật** vào bộ này — không bao giờ tạo suite song song.
+- `test-registry.json` + `.context/coverage.json` + `.context/test-tasks.json` là các mặt của cùng bộ: test nào tồn tại/đã chạy · test nào giữ phần nào.
+
+## Test case — nơi user chốt "cần test cái gì"
+
+- Test case gom theo **module**: `.context/test-cases/<module>.md`, id `TC-<module>-NN`.
+- Mỗi case: Requirement (`R-xx`) · Module · Tầng · Input · Steps · Expected (từ spec) · `Status` (draft→approved) · `Test status` (untested→passed/failed) · `Test ref`.
+- Trạng thái task: `.context/test-tasks.json` (module → cases; biết case nào **chưa test**).
+- Test code chỉ được sinh **sau khi** test case `approved` — và phải gắn `TC-xx`.
 
 ## Hợp đồng bàn giao: `.spec-cache/spec/test-scope/current.json` (versioned)
 
-**Template DEV sinh ra** sau mỗi bug fix / feature update. **Template AUTOTEST đọc** để biết cần test cái gì — không phải tự mò.
-
-> 📌 Vị trí + version scheme: xem `docs/SPEC_VERSIONING.md`. Scope nằm trong `spec/test-scope/` (cạnh spec), **có `specVersion` + `scopeVersion`** để test biết đang cover đến đâu.
+**Template DEV sinh ra** sau mỗi bug fix / feature update. **Template AUTOTEST đọc** để biết cần test cái gì.
 
 ```jsonc
 {
-  "specVersion": "1.2.0",       // scope này bám spec version nào
-  "scopeVersion": 3,             // lần sinh thứ mấy (tăng mỗi lần)
+  "specVersion": "1.2.0",
+  "scopeVersion": 3,
   "generatedAt": "2026-10-05T13:32:00+07:00",
   "trigger": "initial-build | bug-fix | feature-update",
-  "workItem": "bug-login-timeout | feature-stripe-selfserve",
-  "specRefs": ["R-01", "R-05"],              // requirement liên quan
-  "changed": {
-    "files": ["src/auth/login.ts", "src/api/session.ts"],
-    "modules": ["auth", "session"]
-  },
-  "impact": {
-    "direct": ["auth.login", "auth.refresh"],     // hành vi đổi TRỰC TIẾP
-    "dependents": ["portal.session"],             // module phụ thuộc → có thể vỡ
-    "regression": ["payment.checkout"]            // luồng cũ cần retest lại
-  },
+  "workItem": "bug-login-timeout",
+  "specRefs": ["R-01", "R-05"],
+  "changed": { "files": ["src/auth/login.ts"], "modules": ["auth"] },
+  "impact": { "direct": ["auth.login"], "dependents": ["portal.session"], "regression": ["payment.checkout"] },
   "risk": "low | medium | high",
-  "acceptance": ["login thành công < 2s", "token refresh không mất session"],
-  "notes": "đổi timeout 30s → 10s, ảnh hưởng mọi call auth"
+  "acceptance": ["login thành công < 2s"],
+  "notes": "đổi timeout 30s → 10s"
 }
 ```
 
-**Producer:** template DEV — bắt buộc, không bỏ.
-**Consumer:** template AUTOTEST (`scope-planner` + `/autotest`) — đọc để chọn test, ghi `.context/test-status.json` để theo dõi version đã cover.
+**Producer:** template DEV. **Consumer:** template AUTOTEST (`scope-planner` + `/autotest`).
 
 ---
 
-## Lệnh 1 — `/autotest` (test tính năng MỚI, CÓ tạo test case)
+## Lệnh 1 — `/autotest` (test tính năng MỚI)
 
-> Check spec → **tạo test case cho spec mới** → chạy ngầm (headless) → autotest browser (headed, bung hẳn) → cập nhật tiến độ. **KHÔNG retest luồng cũ.**
+### Lần đầu
+1. **Config spec** — chưa link → hỏi `/spec-link <git-url>`
+2. **Đọc spec + overview** — spec version, modules, `R-xx`, phần chưa test
+3. **Brainstorm câu hỏi** — spec mơ hồ (expected, edge, ưu tiên) → hỏi user
+4. **Tạo test case** (draft, gom theo module)
+5. ⛔ **User check & update** → chốt `approved`
+6. **Sinh test code theo test case → chạy NGẦM (headless)** → log bug ra file
+7. **Chạy BROWSER TỪNG CASE** (headed, giữ mở) → user chọn case tiếp
+8. **Cập nhật trạng thái task**
 
-### Giai đoạn 0 — Chuẩn bị
-- `/spec-link --sync` — pull spec mới nhất; chưa link → hỏi link
-- Đọc `.spec-cache/spec/test-scope/current.json` → xác định **phạm vi mới**: `specRefs` + `impact.direct` + `acceptance`
-- `spec-validator` PASS trước khi sinh test
+### Các lần sau
+Vào `/autotest` → đọc spec → lấy task **chưa test** (`test-tasks.json`) → tạo test case → chạy luồng bước 4–8.
 
-### Giai đoạn 1 — TẠO TEST CASE từ spec mới (bắt buộc)
-- **Check spec** → lập danh sách `R-xx` **mới / chưa có test** (đối chiếu `.context/coverage.json` + `test-registry.json`)
-- `test-writer` sinh test case cho từng `R-xx` mới (unit + property-based), **traceable**; expected từ spec (không từ code)
-- Ghi mapping vào `.context/test-plan.md`. **Gate**: mọi `R-xx` mới có ≥1 test case
+### Chi tiết giai đoạn
 
-### Giai đoạn 2 — Chạy NGẦM (headless, KHÔNG bung browser)
-- Chạy test **phần mới**: `npm test` / `npx vitest run` / `pytest` / `npx playwright test` (mặc định headless)
-- **LƯU kết quả** `.context/test-results/headless-run.json` — **CHỈ LƯU LOG, KHÔNG cập nhật tiến độ**
-- Fail → `test-reflector` phân loại (`bug-in-test` / `bug-in-code`)
+| Bước | Làm gì | Output |
+|---|---|---|
+| A. Tạo test case | `test-case-author` soạn `TC-xx` từ `R-xx` mới, gom theo module, `Status: draft` | `.context/test-cases/<module>.md` + `.context/test-tasks.json` |
+| B. ⛔ Human checkpoint | **DỪNG**, user sửa/chốt test case (`approved`) | test case `approved` |
+| C. Test code + chạy ngầm | `test-writer` hiện thực hoá đúng test case → chạy headless → log bug | `.context/test-results/headless-run.json` (+ `bugs.md`) |
+| D. Chạy browser từng case | list task theo module → đi **từng case 1**, browser headed bung hẳn, giữ mở; xong 1 case **chờ user chọn case tiếp** | `.context/test-results/browser-run.json` |
+| E. Cập nhật trạng thái | `Test status` + `test-tasks.json` + `test-registry.json` + coverage → không test lại cái đã test | cập nhật state |
 
-### Giai đoạn 3 — AUTOTEST với browser (HEADED — bung hẳn ra)
-- `npx playwright test --headed` + `use: { headless: false }` → **browser mở thật** cho user theo dõi
-- **Đến bước cuối cùng:** (1) **LƯU kết quả** (screenshot + report + json) `.context/test-results/browser-run.json`; (2) **KHÔNG đóng browser** — `await page.pause()` hoặc fixture `keepBrowserOpen` (env `LEAVE_BROWSER_OPEN=1`)
-- `test-reflector` phân loại fail
-
-### Giai đoạn 4 — Cập nhật tiến độ (TỰ ĐỘNG — CHỈ sau Giai đoạn 3)
-1. Kiểm tra trùng → ghi/cập nhật `test-registry.json`
-2. Cập nhật `.context/coverage.json` (req → `covered`/`failing` + `testRef` + `lastRunAt`)
-3. Cập nhật `.context/test-status.json`
+**Biến thể:** `/autotest <module>` · `/autotest --no-browser` (chỉ chạy ngầm).
 
 ---
 
-## Lệnh 2 — `/retest` (chạy LẠI test đã có, KHÔNG tạo test mới)
-
-> Dùng khi đã có test trong bộ, chỉ muốn **chạy lại** để xác nhận còn xanh.
+## Lệnh 2 — `/retest` (chạy LẠI test đã có, KHÔNG tạo mới)
 
 | Cách dùng | Phạm vi |
 |---|---|
-| `/retest --full` | toàn bộ test trong `tests/` (theo `test-registry.json`) |
-| `/retest <feature\|module>` | 1 chức năng/module (lọc theo `tags`/module/`refs` trong registry) |
+| `/retest --all` | toàn bộ hệ thống |
+| `/retest <module\|feature>` | 1 cụm chức năng |
+| `/retest <TC-xx>` | 1 test case |
 | `/retest ... --no-browser` | chỉ chạy ngầm (headless) |
 
-Flow: chọn phạm vi → **chạy ngầm (headless)** → **chạy browser (headed, giữ mở)** → cập nhật `status`/`lastRunAt` + tiến độ. **KHÔNG sinh test mới.**
+Flow: chọn phạm vi → chạy ngầm (headless) → chạy browser (headed, giữ mở; đi từng case như `/autotest`) → cập nhật trạng thái. **KHÔNG sinh test case/test mới.**
 
 ---
 
 ## Bảng tóm tắt
 
-| Lệnh | Mục đích | Tạo test case? | Phạm vi | Cơ chế chạy |
-|---|---|---|---|---|
-| `/autotest` | test tính năng MỚI | ✅ CÓ | phần mới (spec/test-scope) | ngầm (headless) → browser (headed, giữ mở) |
-| `/retest` | chạy lại test đã có | ❌ KHÔNG | `--full` hoặc 1 chức năng | ngầm (headless) → browser (headed, giữ mở) |
+| Lệnh | Mục đích | Tạo test case? | Phạm vi |
+|---|---|---|---|
+| `/autotest` | test tính năng MỚI | ✅ CÓ | phần mới (spec/test-scope) |
+| `/retest` | chạy lại test đã có | ❌ KHÔNG | `--all` / 1 cụm chức năng / 1 test case |
 
-Giai đoạn trong mỗi lần chạy:
-
-| Giai đoạn | Cập nhật tiến độ? |
+| Giai đoạn | Cập nhật trạng thái? |
 |---|---|
-| Chạy NGẦM (headless) | ❌ chỉ lưu log |
-| Chạy BROWSER (headed, giữ mở) | ❌ |
-| Sau browser xong | ✅ registry + coverage + test-status |
+| Chạy NGẦM (headless) | ❌ chỉ lưu log + bug |
+| Chạy BROWSER (headed, từng case, giữ mở) | ✅ sau mỗi case |
 
 ## Vòng lặp thực tế
 
 ```
 [DEV] code mới / feature mới / spec đổi ──► sinh .spec-cache/spec/test-scope/current.json
                                                         │
-                                                        ▼
-[TEST] /autotest ──► (0) sync spec + đọc scope
-                      (1) TẠO TEST CASE cho spec mới (test-writer)
-                      (2) chạy NGẦM headless (chỉ lưu log)
-                      (3) autotest BROWSER headed (bung hẳn, giữ browser mở)
-                      (4) CẬP NHẬT TIẾN ĐỘ (sau khi browser xong)
+[TEST] /autotest ──► (0) config spec + overview + brainstorm
+                      (A) TẠO TEST CASE (gom theo module, draft)
+                      (B) ⛔ user check & update → approved
+                      (C) test code theo test case → chạy NGẦM headless → log bug
+                      (D) chạy BROWSER từng case (headed, giữ mở) → user chọn case tiếp
+                      (E) cập nhật trạng thái (không test lại cái đã test)
                                                         │
-[TEST] /retest --full | /retest <feature> ──► chạy LẠI test đã có (không tạo mới)
+[TEST] /retest --all | <module> | <TC-xx> ──► chạy LẠI test đã có
                                                         │
 [TEST TAY] case pass ──► /capture-manual ──► auto test ─┤
 [USER] đưa test case ──► /from-cases ──────► auto test ─┤
 [LEGACY] ─────────────► /characterize ─────► golden test ┘
-                                                        │
                                                         ▼
                             📦 BỘ TEST HOÀN CHỈNH (tests/ + test-registry.json)
-                                    └──► retest luồng cũ + test feature mới
 ```
 
 ---
 
-## Đăng ký bộ test + cập nhật tiến độ test (TỰ ĐỘNG, chỉ sau browser)
+## Đăng ký bộ test + cập nhật trạng thái (TỰ ĐỘNG, sau khi chạy)
 
-Sau khi **browser test xong**, agent **tự chạy** các việc sau (giữ 1 bộ duy nhất, không tạo suite song song). Người dùng KHÔNG gõ command:
+Sau khi case chạy xong (headless + browser), agent **tự chạy**:
 
-1. **Ghi manifest** `test-registry.json` (root repo TEST) — mỗi test 1 entry:
+1. **Ghi manifest** `test-registry.json` — mỗi test 1 entry (có `testCase: "TC-xx"`):
    ```jsonc
-   {
-     "updatedAt": "2026-10-05T14:30:00+07:00",
-     "tests": [
-       { "id": "tests/auth.test.ts::login_r01", "file": "tests/auth.test.ts",
-         "refs": ["R-01"], "requirement": "R-01",
-         "origin": "autotest | manual | from-cases | characterization",
-         "tags": ["auth", "smoke"], "regression": true,
-         "status": "pass", "lastRunAt": "2026-10-05T14:35:00+07:00" }
-     ]
-   }
+   { "id": "tests/auth.spec.ts::login", "file": "tests/auth.spec.ts",
+     "testCase": "TC-auth-01", "refs": ["R-01"], "origin": "autotest",
+     "tags": ["auth"], "status": "pass", "lastRunAt": "..." }
    ```
-2. **Không tạo file/suite test mới tách rời** — test mới append vào file hiện có theo module, hoặc thêm file nhưng cùng `tests/` và cùng được liệt kê trong registry.
-3. **Cập nhật tiến độ test**: danh sách req lấy từ spec (`.spec-cache/SPECIFICATIONS.md` — đọc, không ghi); board thiếu → khởi tạo danh sách req từ spec; req trong `refs` vừa chạy → `covered`/`failing` + `testRef` + `lastRunAt`; req mới trong spec → `pending`/`untested`; req bỏ khỏi spec → `n/a`. Ghi `.context/coverage.json` + `.context/test-status.json`. **Test KHÔNG tạo gì thuộc spec.**
+2. **Cập nhật trạng thái task**: `Test status` trong `.context/test-cases/<module>.md` + `headless`/`browser`/`lastRunAt` trong `.context/test-tasks.json`.
+3. **Cập nhật tiến độ**: `.context/coverage.json` (req → covered/failing) + `.context/test-status.json` (specVersionCovered). Danh sách req lấy từ spec (đọc, không ghi).
 
-**Rule chống trùng:** trước khi thêm test, tra `test-registry.json` — đã có test phủ cùng `requirement` + cùng behavior → **cập nhật** thay vì thêm bản sao.
+**Rule chống trùng:** tra `test-registry.json` trước — cùng `testCase`/`requirement` + behavior → **cập nhật** thay vì thêm bản sao.
 
-**Rule tiến độ:** `/coverage` chỉ để **xem báo cáo** — tiến độ do bước tự động này cập nhật. **Spec chỉ đọc từ link** (`.spec-cache/`, read-only) — test không tạo/sinh/sửa spec.
+**Rule trạng thái:** `/coverage` chỉ để **xem** — trạng thái do bước tự động sau khi chạy cập nhật. **Spec chỉ đọc từ link** (read-only).

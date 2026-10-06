@@ -1,27 +1,30 @@
-# /retest — Chạy LẠI test đã có (retest, KHÔNG tạo test mới)
+# /retest — Chạy lại test đã có (toàn hệ thống / cụm chức năng / 1 test case)
 
-> Lệnh **độc lập** với `/autotest`. Dùng khi đã có test trong bộ, chỉ muốn **chạy lại** để xác nhận còn xanh.
-> Chạy được **toàn bộ** hoặc **1 chức năng/module**. **KHÔNG** sinh test mới (việc đó là của `/autotest`).
+> Lệnh **độc lập** với `/autotest`. Chỉ **chạy lại** test đã test rồi — **KHÔNG** tạo test case/test mới.
+> ⭐ Mọi test đều follow TEST CASE — retest chạy đúng test case `approved` đã có (`skills/test-case-first`).
 
 ## Cách dùng
 ```
-/retest --full              → retest TOÀN BỘ test đã có (tests/ + test-registry.json)
-/retest <feature|module>    → retest 1 chức năng/module (lọc theo tag/module trong test-registry.json)
-/retest --no-browser        → chỉ chạy ngầm (kết quả nhanh, không cần xem browser)
+/retest --all                → retest LẠI TOÀN BỘ hệ thống (mọi test case đã approved)
+/retest <module|feature>     → retest 1 cụm chức năng (theo module)
+/retest <TC-xx>              → retest 1 test case
+/retest ... --no-browser      → chỉ chạy ngầm (headless)
 ```
 
 ## Flow
 1. **Chọn phạm vi**:
-   - `--full` → lấy **toàn bộ** test trong `tests/` (theo `test-registry.json`)
-   - `<feature|module>` → lọc test theo `tags` / module trong `test-registry.json` (khớp `refs`/`requirement`)
-2. **Chạy NGẦM (headless)** — chạy lại bộ test đã chọn, không bung browser → lưu `.context/test-results/retest-headless-<scope>.json`
-3. **Chạy BROWSER (headed, bung hẳn ra)** — E2E chạy lại để user theo dõi; cuối cùng **lưu kết quả + GIỮ browser mở** → `.context/test-results/retest-browser-<scope>.json`
-4. **Cập nhật `status` / `lastRunAt`** trong `test-registry.json` + tiến độ `.context/coverage.json`
-   - `test-reflector` phân loại fail (`bug-test` / `bug-code`); nếu vỡ do thay đổi chủ đích → cảnh báo
+   - `--all` → toàn bộ test case đã có (theo `.context/test-tasks.json` + `test-registry.json`)
+   - `<module|feature>` → lọc theo module/cụm chức năng
+   - `<TC-xx>` → 1 test case cụ thể
+2. **Chạy NGẦM (headless)** — chạy lại phạm vi chọn, không bung browser → `.context/test-results/retest-headless-<scope>.json`
+3. **Chạy BROWSER (headed, bung hẳn ra)** — E2E chạy lại cho user theo dõi; cuối cùng **lưu kết quả + GIỮ browser mở** → `.context/test-results/retest-browser-<scope>.json`
+   - Với `--all`/1 cụm: chạy theo **từng case** như `/autotest` (xoạc xong 1 case chờ user chọn case tiếp nếu user muốn đi từng case).
+4. **Cập nhật trạng thái**: `status`/`lastRunAt` trong `test-registry.json` + `Test status` trong `.context/test-cases/<module>.md` + `test-tasks.json` + `coverage.json`.
+   - `test-reflector` phân loại fail (`bug-test` / `bug-code`); vỡ do thay đổi chủ đích → cập nhật test code theo test case (không sửa test case cho khớp code).
 
 ## Rule
-- **KHÔNG tạo/sinh test mới** — retest chỉ chạy test **đã có** trong bộ hoàn chỉnh
+- **KHÔNG tạo test case/test mới** — chỉ chạy lại test **đã có** (đã approved)
 - Muốn sinh test cho spec/tính năng mới → dùng `/autotest`
-- Cùng cơ chế 2 bước: chạy ngầm (headless) trước → browser (headed, giữ mở) sau
-- Cuối luồng tự cập nhật `lastRunAt`/`status` — không cần command phụ
+- Cùng cơ chế chạy: ngầm (headless) trước → browser (headed, giữ mở) sau
+- Cuối luồng tự cập nhật trạng thái — không cần command phụ
 - Vỡ → `test-reflector` phân loại; bug-code → báo dev, bug-test → sửa test

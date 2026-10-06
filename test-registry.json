@@ -1,5 +1,5 @@
 {
-  "_comment": "Manifest của BỘ TEST HOÀN CHỈNH (repo TEST). TỰ ĐỘNG ghi vào đây SAU KHI browser test (/autotest giai đoạn 2) chạy xong (kiểm tra trùng trước) — test mới/cập nhật append vào bộ duy nhất này, không tạo suite song song, không cần gõ command. Chạy ngầm (headless) chỉ lưu log, không ghi ở đây.",
+  "_comment": "Manifest của BỘ TEST HOÀN CHỈNH (repo TEST). Mỗi test có field `testCase` (TC-xx) — mọi test phải follow TEST CASE (skills/test-case-first). TỰ ĐỘNG ghi SAU KHI test chạy (kiem tra trùng trước), không tạo suite song song. Trạng thái 'đã/chưa test' ở .context/test-tasks.json.",
   "updatedAt": null,
   "tests": []
 }

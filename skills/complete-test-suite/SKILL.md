@@ -1,6 +1,6 @@
 ---
 name: complete-test-suite
-description: "Nuôi MỘT bộ test hoàn chỉnh + giữ tiến độ test — mọi test (test-first/characterization/manual/from-cases) TỰ ĐỘNG bổ sung/cập nhật vào cùng bộ (tests/ + test-registry.json) và TỰ CẬP NHẬT tiến độ (.context/coverage.json + .context/test-status.json) SAU KHI browser test (/autotest) chạy xong, không cần gõ command. Chạy ngầm (headless) chỉ lưu log, KHÔNG cập nhật tiến độ. Spec CHỈ đọc từ link git (read-only) — test không tự tạo/không tự sinh gì thuộc spec. Dùng khi chạy /autotest hoặc bất kỳ nhánh sinh test nào."
+description: "Nuôi MỘT bộ test hoàn chỉnh + giữ trạng thái test — mọi test phải follow TEST CASE (skills/test-case-first); sau khi chạy, TỰ ĐỘNG bổ sung/cập nhật vào cùng bộ (tests/ + test-registry.json, mỗi test có testCase=TC-xx) và cập nhật trạng thái (.context/test-tasks.json + .context/coverage.json + .context/test-status.json), không cần gõ command. Spec CHỈ đọc từ link git (read-only) — test không tự tạo gì thuộc spec. Dùng khi chạy /autotest hoặc /retest."
 ---
 
 # Một bộ test hoàn chỉnh + tiến độ test (nguyên tắc gốc)

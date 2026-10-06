@@ -1,0 +1,6 @@
+{
+  "_comment": "Trạng thái TEST CASE theo module (repo TEST) — nguồn để biết case nào đã/chưa test (lần sau /autotest chỉ lấy phần mới; /retest chạy lại phần đã có). Cập nhật TỰ ĐỘNG sau khi chạy. Xem skills/test-case-first.",
+  "updatedAt": null,
+  "specVersion": null,
+  "modules": []
+}
