@@ -5,7 +5,7 @@
 > ⭐ **Luật trục — TEST-CASE-FIRST:** **SPEC → TEST CASE (user check/sửa/chốt) → TEST CODE → chạy.** Mọi test phải follow test case; test code chỉ hiện thực hoá đúng test case user đã chốt. Xem `skills/test-case-first`.
 
 > ⭐ **2 lệnh độc lập:**
-> - **`/autotest`** — test tính năng MỚI/spec mới: (lần đầu) hỏi config spec → đọc spec + overview → brainstorm câu hỏi → **tạo test case** → **chờ user sửa & chốt** → chạy ngầm (headless, log bug) → **chạy browser TỪNG CASE** cho user kiểm tra → cập nhật trạng thái. Các lần sau: đọc spec → lấy task **chưa test** → tạo test case → chạy y hệt.
+> - **`/autotest`** — test tính năng MỚI/spec mới: (lần đầu) hỏi config spec → đọc spec + overview → brainstorm câu hỏi → **⛔ duyệt spec (user OK)** → **tạo test case** → **chờ user sửa & chốt** → chạy ngầm (headless, log bug) → **chạy browser TỪNG CASE** cho user kiểm tra → cập nhật trạng thái. Các lần sau: đọc spec → lấy task **chưa test** → tạo test case → chạy y hệt.
 > - **`/retest`** — chạy LẠI test đã có: `--all` (toàn hệ thống) · `<module>` (1 cụm chức năng) · `<TC-xx>` (1 test case). KHÔNG tạo test mới.
 >
 > Cả 2 dùng chung cơ chế: **ngầm (headless) trước** → **browser (headed, bung hẳn, giữ mở)** sau → **cập nhật trạng thái**.
@@ -17,6 +17,7 @@
 | # | Giai đoạn | Làm gì | Output |
 |---|---|---|---|
 | 0 | (Lần đầu) Config + spec | Hỏi `/spec-link` nếu chưa link → hỏi **link deploy web** (`web_app_url` → `.agent/PROJECT_PROFILE.md`, baseURL browser) → đọc spec + nêu **overview** → **brainstorm câu hỏi** cần hỏi | `web_app_url` có trong PROJECT_PROFILE |
+| A0 | ⛔ **Duyệt SPEC** (trước khi tạo case) | Nêu lại spec vừa hiểu bằng lời agent (phạm vi, từng `R-xx`, giả định, phần ngoài scope) → **DỪNG cho user duyệt** → OK mới sang A | user xác nhận hiểu đúng spec |
 | A | **Tạo TEST CASE** (draft) | `test-case-author` soạn test case `TC-xx` từ `R-xx` mới, **gom theo module** | `.context/test-cases/<module>.md` + `.context/test-tasks.json` |
 | B | ⛔ **User check & update** | **DỪNG** — user sửa/chốt test case (`approved`) | test case `approved` |
 | C | Sinh test code + chạy **NGẦM** (headless) | `test-writer` hiện thực hoá đúng test case → chạy headless → **log bug** → **`test-reflector` phân loại fail** (bug-in-test → sửa test; bug-in-code → báo dev, case `failing`, KHÔNG sang D) | `.context/test-results/headless-run.json` (+ `bugs.md`) |
@@ -57,6 +58,7 @@ Template DEV sinh `.spec-cache/spec/test-scope/current.json` (có `specVersion`+
 /autotest  ── tính năng MỚI (test-case-first)
       │
       ├── (0) lần đầu: config spec + link deploy web (web_app_url) + overview + brainstorm câu hỏi
+      ├── (A0) ⛔ DUYỆT SPEC — nêu lại spec vừa hiểu, user OK mới tạo case
       ├── (A) TẠO TEST CASE (gom theo module)        → .context/test-cases/<module>.md (draft)
       ├── (B) ⛔ user check & update → approved      ← human checkpoint
       ├── (C) sinh test code theo test case → chạy NGẦM (headless) → log bug

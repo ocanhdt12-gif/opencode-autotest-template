@@ -18,7 +18,8 @@
    - ⚠️ **Không bắt buộc để bắt đầu.** Thiếu `web_app_url` thì **vẫn chạy được bước C (headless)** cho test tầng `unit`/`integration`; CHỈ **bước D (browser/E2E)** bị hoãn. Nếu test case có tầng `e2e`/`browser` mà chưa có url → hỏi url trước khi tới D (không chặn A→C).
 3. **Đọc spec + nêu overview**: spec version, các module, danh sách `R-xx`, phần chưa có test.
 4. **Brainstorm câu hỏi cần hỏi**: chỗ spec mơ hồ (expected, edge case, ưu tiên) → hỏi user.
-5. **Tạo test case** (xem bước A bên dưới).
+5. ⛔ **HUMAN CHECKPOINT — DUYỆT SPEC trước khi tạo test case** (xem bước **A0** bên dưới): nêu lại spec vừa hiểu (bằng lời của agent) → **DỪNG cho user duyệt** → user OK mới sang tạo test case.
+6. **Tạo test case** (xem bước A bên dưới).
 
 ## CÁC LẦN SAU
 - ⚙️ **TỰ ĐỘNG sync spec trước khi test** — chạy `git -C .spec-cache pull --ff-only` ngay khi vào lệnh (KHÔNG cần gõ `/spec-link --sync`). Cache hỏng/mất mạng → dùng cache cũ + cảnh báo "spec có thể cũ".
@@ -29,6 +30,16 @@
   - In cho user danh sách case **nghi stale** → yêu cầu check/update expected rồi chốt `approved` lại trước khi chạy. KHÔNG tự chạy test case nghi stale với expected cũ.
 
 ---
+
+## A0. ⛔ HUMAN CHECKPOINT — DUYỆT SPEC (trước khi tạo test case)
+- Sau khi đọc spec, **nêu lại cho user bằng lời của agent** (KHÔNG chép nguyên văn spec) để xác nhận hiểu đúng:
+  - **Phạm vi lần này**: module/tính năng nào sẽ test, các `R-xx` liên quan.
+  - **Hiểu của agent về từng requirement**: mỗi `R-xx` làm gì + expected behavior chính (1-2 dòng/req).
+  - **Giả định & điểm mơ hồ**: chỗ spec không rõ agent đang hiểu/giả định thế nào (để user sửa sớm).
+  - **Ngoài phạm vi**: phần spec agent CỐ Ý chưa test lần này (nếu có) + lý do.
+- **DỪNG — chờ user duyệt.** User xác nhận "đúng/OK" hoặc chỉnh lại cách hiểu.
+- ⚠️ **Chưa được tạo test case khi user chưa duyệt spec.** Nếu user sửa cách hiểu → cập nhật rồi nêu lại, duyệt xong mới sang A.
+- Mục đích: bắt sai sót **ở tầng hiểu spec** trước, rẻ hơn nhiều so với phát hiện khi đã soạn cả bộ test case.
 
 ## A. Tạo test case (draft) — gom theo module
 - `test-case-author` soạn **TEST CASE** (không phải test code) cho `R-xx` mới → `.context/test-cases/<module>.md`, mỗi case `TC-<module>-NN`, **`Status: draft`**.

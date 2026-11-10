@@ -50,11 +50,12 @@ Mọi test đều nuôi **1 bộ duy nhất** trong repo — vừa **retest tín
 2. **Config web URL** — chưa có `web_app_url` → hỏi **link deploy web** (baseURL browser) + điền PROJECT_PROFILE
 3. **Đọc spec + overview** — spec version, modules, `R-xx`, phần chưa test
 4. **Brainstorm câu hỏi** — spec mơ hồ (expected, edge, ưu tiên) → hỏi user (kèm link deploy web nếu chưa có)
-5. **Tạo test case** (draft, gom theo module)
-6. ⛔ **User check & update** → chốt `approved`
-7. **Sinh test code theo test case → chạy NGẦM (headless)** → log bug ra file
-8. **Chạy BROWSER TỪNG CASE** (headed, giữ mở) → user chọn case tiếp
-9. **Cập nhật trạng thái task**
+5. ⛔ **DUYỆT SPEC** — nêu lại spec vừa hiểu (bằng lời agent) → DỪNG cho user duyệt → OK mới tạo case
+6. **Tạo test case** (draft, gom theo module)
+7. ⛔ **User check & update** → chốt `approved`
+8. **Sinh test code theo test case → chạy NGẦM (headless)** → log bug ra file
+9. **Chạy BROWSER TỪNG CASE** (headed, giữ mở) → user chọn case tiếp
+10. **Cập nhật trạng thái task**
 
 ### Các lần sau
 Vào `/autotest` → đọc spec → lấy task **chưa test** (`test-tasks.json`) → tạo test case → chạy luồng bước 4–8.
@@ -64,6 +65,7 @@ Vào `/autotest` → đọc spec → lấy task **chưa test** (`test-tasks.json
 
 | Bước | Làm gì | Output |
 |---|---|---|
+| A0. ⛔ Duyệt spec | Nêu lại spec vừa hiểu bằng lời agent (phạm vi, từng `R-xx`, giả định, phần ngoài scope) → DỪNG cho user duyệt → OK mới tạo case | user xác nhận hiểu đúng spec |
 | A. Tạo test case | `test-case-author` soạn `TC-xx` từ `R-xx` mới, **dạng bảng**, gom theo module, `Status: draft`; cùng module → update file cũ (thêm dòng), module mới → tạo file mới | `.context/test-cases/<module>.md` + `.context/test-tasks.json` |
 | B. ⛔ Human checkpoint | **DỪNG**, user sửa/chốt test case (`approved`) | test case `approved` |
 | C. Test code + chạy ngầm | `test-writer` hiện thực hoá đúng test case → chạy headless → log bug → **`test-reflector` phân loại fail** (bug-in-test→sửa test; bug-in-code→báo dev, case `failing`, **không** sang D) | `.context/test-results/headless-run.json` (+ `bugs.md`) |
