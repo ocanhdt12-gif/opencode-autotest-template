@@ -58,6 +58,7 @@ Mọi test đều nuôi **1 bộ duy nhất** trong repo — vừa **retest tín
 
 ### Các lần sau
 Vào `/autotest` → đọc spec → lấy task **chưa test** (`test-tasks.json`) → tạo test case → chạy luồng bước 4–8.
+> 🔁 **Case STALE do spec đổi:** `current.json` có `trigger=feature-update/bug-fix` → đối chiếu `specRefs` (R-xx đổi) với case `approved`; case dính R-xx đổi → đặt `draft` lại cho user duyệt expected mới (không chạy test với behavior cũ).
 
 ### Chi tiết các bước (A–E)
 
@@ -65,7 +66,7 @@ Vào `/autotest` → đọc spec → lấy task **chưa test** (`test-tasks.json
 |---|---|---|
 | A. Tạo test case | `test-case-author` soạn `TC-xx` từ `R-xx` mới, **dạng bảng**, gom theo module, `Status: draft`; cùng module → update file cũ (thêm dòng), module mới → tạo file mới | `.context/test-cases/<module>.md` + `.context/test-tasks.json` |
 | B. ⛔ Human checkpoint | **DỪNG**, user sửa/chốt test case (`approved`) | test case `approved` |
-| C. Test code + chạy ngầm | `test-writer` hiện thực hoá đúng test case → chạy headless → log bug | `.context/test-results/headless-run.json` (+ `bugs.md`) |
+| C. Test code + chạy ngầm | `test-writer` hiện thực hoá đúng test case → chạy headless → log bug → **`test-reflector` phân loại fail** (bug-in-test→sửa test; bug-in-code→báo dev, case `failing`, **không** sang D) | `.context/test-results/headless-run.json` (+ `bugs.md`) |
 | D. Chạy browser từng case | list task theo module → đi **từng case 1**, browser headed bung hẳn, giữ mở; xong 1 case **chờ user chọn case tiếp** | `.context/test-results/browser-run.json` |
 | E. Cập nhật trạng thái | `Test status` + `test-tasks.json` + `test-registry.json` + coverage → không test lại cái đã test | cập nhật state |
 

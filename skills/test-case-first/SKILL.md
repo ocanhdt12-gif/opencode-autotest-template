@@ -59,6 +59,7 @@ Khi có **task mới cần test** (feature mới / requirement mới / spec mớ
 | Task mới **thuộc module ĐÃ CÓ** (vd module `auth` đã có `auth.md`, thêm case login-GOOGLE) | **UPDATE FILE CŨ** — thêm **dòng mới vào bảng** của `auth.md`, đánh số `TC` tiếp theo (`TC-auth-03`…). **KHÔNG tạo file mới.** |
 | Task mới **thuộc module MỚI** (chưa có file) | **TẠO FILE MỚI** `<module>.md` với bảng mới, đánh số từ `TC-<module>-01`. |
 | Test case cũ đổi behavior (do spec đổi) | **UPDATE DÒNG cũ** trong bảng (sửa Input/Steps/Expected + `Status: draft` lại để user duyệt lại), không thêm dòng trùng. |
+| **User muốn sửa 1 case `approved`** (không phải tạo mới, không phải retest) | **Sửa trực tiếp dòng đó** trong `.context/test-cases/<module>.md` → đặt `Status: draft` lại → user chốt `approved` → lần `/autotest`/`/retest` sau dùng bản mới. Không cần command riêng; đây là file nguồn, sửa tay hợp lệ. Nếu case đã có test code (entry trong `test-registry.json`) → sau khi sửa phải chạy lại (`/retest <TC-xx>`) để test code khớp expected mới. |
 
 - Đồng thời cập nhật `.context/test-tasks.json` cho khớp (thêm case mới / sửa case cũ trong module tương ứng).
 - Nguyên tắc: **1 module = 1 file** — không rải test case của cùng module ra nhiều file, không tạo file trùng (`auth.md` + `auth-2.md`…). Tra `.context/test-cases/` trước khi tạo mới.

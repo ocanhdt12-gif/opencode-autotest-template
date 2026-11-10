@@ -14,8 +14,8 @@
 1. **Hỏi config spec**: chưa có link → yêu cầu `/spec-link <git-url>` (hỏi, không tự bịa spec).
    - Sau khi link xong, các lần chạy sau **tự sync** — KHÔNG cần gõ `/spec-link --sync` thủ công.
 2. **Hỏi link deploy web**: chưa có `web_app_url` trong `.agent/PROJECT_PROFILE.md` → hỏi user link deploy
-   (vd `https://staging.example.com`) → điền vào `web_app_url`. Đây là **baseURL** cho test browser/E2E —
-   thiếu thì bước D (browser) không chạy được; cũng hỏi luôn trong brainstorm khi còn mơ hồ.
+   (vd `https://staging.example.com`) → điền vào `web_app_url`. Đây là **baseURL** cho test browser/E2E.
+   - ⚠️ **Không bắt buộc để bắt đầu.** Thiếu `web_app_url` thì **vẫn chạy được bước C (headless)** cho test tầng `unit`/`integration`; CHỈ **bước D (browser/E2E)** bị hoãn. Nếu test case có tầng `e2e`/`browser` mà chưa có url → hỏi url trước khi tới D (không chặn A→C).
 3. **Đọc spec + nêu overview**: spec version, các module, danh sách `R-xx`, phần chưa có test.
 4. **Brainstorm câu hỏi cần hỏi**: chỗ spec mơ hồ (expected, edge case, ưu tiên) → hỏi user.
 5. **Tạo test case** (xem bước A bên dưới).
@@ -23,6 +23,10 @@
 ## CÁC LẦN SAU
 - ⚙️ **TỰ ĐỘNG sync spec trước khi test** — chạy `git -C .spec-cache pull --ff-only` ngay khi vào lệnh (KHÔNG cần gõ `/spec-link --sync`). Cache hỏng/mất mạng → dùng cache cũ + cảnh báo "spec có thể cũ".
 - Đọc `.spec-cache/SPECIFICATIONS.md` + `test-scope` → lấy các **task/case CHƯA test** (đối chiếu `.context/test-tasks.json`) → tạo test case cho phần mới → chạy luồng y hệt bên dưới.
+- 🔁 **PHÁT HIỆN TEST CASE STALE do spec đổi** (quan trọng — tránh test cũ chạy theo behavior sai):
+  - Đọc `.spec-cache/spec/test-scope/current.json`: nếu `trigger` = `feature-update`/`bug-fix`, lấy `specRefs` (các `R-xx` bị đổi) + `changed.modules`.
+  - Đối chiếu với test case **đã `approved`**: case nào map tới `R-xx` vừa đổi → **đánh dấu `Status: draft` lại** (behavior có thể đã khác) theo rule `skills/test-case-first` (UPDATE dòng cũ, không thêm trùng).
+  - In cho user danh sách case **nghi stale** → yêu cầu check/update expected rồi chốt `approved` lại trước khi chạy. KHÔNG tự chạy test case nghi stale với expected cũ.
 
 ---
 
@@ -43,6 +47,11 @@
 - Chạy **ngầm (headless)**, không bung browser, cho nhanh: `npm test` / `npx vitest run` / `pytest` / `npx playwright test`
 - **LƯU kết quả + BUG ra file**: `.context/test-results/headless-run.json` (+ `.context/test-results/bugs.md` nếu có fail). Ghi rõ test nào fail → gắn `TC-xx`.
 - ⚠️ **CHỈ LƯU LOG — chưa cập nhật "đã test" chính thức** (đối chiếu ở bước E).
+- 🔀 **Phân loại fail NGAY (gọi `test-reflector`) trước khi sang D:**
+  - `bug-in-test` (test sai) → sửa test theo test case rồi chạy lại headless; KHÔNG sang D với test sai.
+  - `bug-in-code` (app sai, test đúng) → ghi `bugs.md` + **báo user/dev**; case đó **đánh dấu `failing`**, KHÔNG chạy browser (D) cho tới khi code fix (browser chỉ để user xác nhận hành vi ĐÚNG — chạy case đang có bug code là vô nghĩa).
+  - `GREEN` → đủ điều kiện sang D.
+  - ⛔ Nếu TẤT CẢ case headless đều `bug-in-code` (app hỏng) → dừng, báo user "code đang lỗi, cần fix trước khi kiểm browser", không sang D.
 
 ## D. Chạy BROWSER cho user kiểm tra — TỪNG CASE, gom theo module
 - Từ test case `approved`, tạo **list task chạy browser**, **gom theo module** cho dễ theo dõi (dựa `.context/test-tasks.json`).
@@ -61,7 +70,8 @@
 - ⭐ **MỌI test follow test case** — không có test code ngoài test case `approved`
 - **Test case phải được user check/update & chốt trước khi test** (checkpoint B)
 - **Browser chạy TỪNG CASE 1**, gom theo module; xong 1 case **chờ user chọn case tiếp** — không tự chạy hết
-- Browser **LUÔN headed**; cuối mỗi case **GIỮ browser mở** (không `browser.close()`)
+- Browser **LUÔN headed** khi chạy bước D; cuối mỗi case **GIỮ browser mở** (không `browser.close()`).
+  - ⚠️ **Ngoại lệ có chủ đích:** cờ `--no-browser` **bỏ qua bước D** (chỉ chạy C headless — dùng cho CI / chạy nhanh / chưa có `web_app_url`). Khi đã vào D thì mới áp rule "luôn headed".
 - Chạy ngầm trước (headless, log bug) → browser sau (headed, user kiểm tra)
 - **Cập nhật trạng thái task sau khi chạy** → không test lại cái đã test
 - **KHÔNG retest toàn hệ thống** ở đây — việc đó thuộc `/retest`

@@ -19,11 +19,12 @@
 | 0 | (Lần đầu) Config + spec | Hỏi `/spec-link` nếu chưa link → hỏi **link deploy web** (`web_app_url` → `.agent/PROJECT_PROFILE.md`, baseURL browser) → đọc spec + nêu **overview** → **brainstorm câu hỏi** cần hỏi | `web_app_url` có trong PROJECT_PROFILE |
 | A | **Tạo TEST CASE** (draft) | `test-case-author` soạn test case `TC-xx` từ `R-xx` mới, **gom theo module** | `.context/test-cases/<module>.md` + `.context/test-tasks.json` |
 | B | ⛔ **User check & update** | **DỪNG** — user sửa/chốt test case (`approved`) | test case `approved` |
-| C | Sinh test code + chạy **NGẦM** (headless) | `test-writer` hiện thực hoá đúng test case → chạy headless → **log bug ra file** | `.context/test-results/headless-run.json` (+ `bugs.md`) |
+| C | Sinh test code + chạy **NGẦM** (headless) | `test-writer` hiện thực hoá đúng test case → chạy headless → **log bug** → **`test-reflector` phân loại fail** (bug-in-test → sửa test; bug-in-code → báo dev, case `failing`, KHÔNG sang D) | `.context/test-results/headless-run.json` (+ `bugs.md`) |
 | D | **Chạy BROWSER từng case** (headed) | Tạo list task theo module → **đi từng case 1**, bung browser thật, giữ mở; **xong 1 case chờ user chọn case tiếp** | `.context/test-results/browser-run.json` |
 | E | Cập nhật trạng thái | Cập nhật `Test status` + `test-tasks.json` + `test-registry.json` + coverage → **không test lại cái đã test** | `test-registry.json` + `.context/test-tasks.json` + `.context/coverage.json` |
 
 **Các lần sau:** vào `/autotest` → đọc spec → lấy task **chưa test** (`test-tasks.json`) → tạo test case → chạy lại luồng A–E.
+> 🔁 **Phát hiện case STALE:** nếu `current.json` có `trigger=feature-update/bug-fix`, đối chiếu `specRefs` (R-xx đổi) với test case `approved` → case map tới R-xx đổi bị đặt `draft` lại cho user duyệt (rule `skills/test-case-first`). Tránh chạy test theo behavior cũ.
 
 ## `/retest` — chạy LẠI test đã có (không tạo mới)
 
