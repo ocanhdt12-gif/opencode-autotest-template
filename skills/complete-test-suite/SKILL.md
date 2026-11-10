@@ -7,7 +7,7 @@ description: "Nuôi MỘT bộ test hoàn chỉnh + giữ trạng thái test —
 
 Test chỉ có **1 bộ duy nhất** trong repo. Mọi test chỉ để **nuôi** bộ này — vừa **retest tính năng cũ**, vừa **test feature mới**. Không bao giờ có suite riêng.
 
-> ⚙️ **TỰ ĐỘNG — không có command riêng.** Sau khi **browser test (`/autotest` giai đoạn 2) chạy xong**, agent **tự chạy** bước đăng ký + **tự cập nhật tiến độ** dưới đây. Người dùng KHÔNG gõ gì thêm (kể cả `/coverage`). **Chạy ngầm (headless) ở giai đoạn 1 chỉ LƯU LOG — không cập nhật tiến độ.**
+> ⚙️ **TỰ ĐỘNG — không có command riêng.** Sau khi **browser test (`/autotest` bước D) chạy xong**, agent **tự chạy** bước đăng ký + **tự cập nhật tiến độ** dưới đây. Người dùng KHÔNG gõ gì thêm (kể cả `/coverage`). **Chạy ngầm (headless) ở bước C chỉ LƯU LOG — không cập nhật tiến độ.**
 
 ## 🔒 Spec: chỉ ĐỌC từ link — test KHÔNG tạo gì thuộc spec
 
@@ -30,8 +30,8 @@ Spec **100% đến từ repo DEV qua link git** (`/spec-link` → `.spec-cache/`
 | `test-registry.json` (root repo TEST) | Manifest bộ test: `file` + `refs` + `origin` + `status` + `lastRunAt` | bước tự động sau browser test |
 | `.context/coverage.json` | **Tiến độ test theo req** (req → covered/failing + `testRef`) | bước tự động sau browser test |
 | `.context/test-status.json` | **Tiến độ theo version** (specVersionCovered/scopeVersionCovered) | bước tự động sau browser test |
-| `.context/test-results/headless-run.json` | Kết quả **chạy ngầm** (headless) — chỉ log | giai đoạn 1 của `/autotest` |
-| `.context/test-results/browser-run.json` | Kết quả **browser test** (headed) | giai đoạn 2 của `/autotest` |
+| `.context/test-results/headless-run.json` | Kết quả **chạy ngầm** (headless) — chỉ log | bước C của `/autotest` |
+| `.context/test-results/browser-run.json` | Kết quả **browser test** (headed) | bước D của `/autotest` |
 
 > **Danh sách req** luôn lấy từ spec (`.spec-cache/SPECIFICATIONS.md`); **trạng thái** là do test tự ghi. Board = danh sách req (từ spec) + tiến độ (của test).
 
@@ -39,8 +39,8 @@ Spec **100% đến từ repo DEV qua link git** (`/spec-link` → `.spec-cache/`
 
 | Thời điểm | Cập nhật tiến độ? |
 |---|---|
-| `/autotest` giai đoạn 1 — chạy ngầm (headless) | ❌ **KHÔNG** — chỉ lưu `.context/test-results/headless-run.json` |
-| `/autotest` giai đoạn 2 — browser (headed) xong | ✅ **CÓ** — registry + coverage + test-status |
+| `/autotest` bước C (headless) — chạy ngầm (headless) | ❌ **KHÔNG** — chỉ lưu `.context/test-results/headless-run.json` |
+| `/autotest` bước D (browser) — browser (headed) xong | ✅ **CÓ** — registry + coverage + test-status |
 
 ## Schema `test-registry.json`
 

@@ -18,7 +18,7 @@
    thiếu thì bước D (browser) không chạy được; cũng hỏi luôn trong brainstorm khi còn mơ hồ.
 3. **Đọc spec + nêu overview**: spec version, các module, danh sách `R-xx`, phần chưa có test.
 4. **Brainstorm câu hỏi cần hỏi**: chỗ spec mơ hồ (expected, edge case, ưu tiên) → hỏi user.
-4. **Tạo test case** (xem bước A bên dưới).
+5. **Tạo test case** (xem bước A bên dưới).
 
 ## CÁC LẦN SAU
 - ⚙️ **TỰ ĐỘNG sync spec trước khi test** — chạy `git -C .spec-cache pull --ff-only` ngay khi vào lệnh (KHÔNG cần gõ `/spec-link --sync`). Cache hỏng/mất mạng → dùng cache cũ + cảnh báo "spec có thể cũ".

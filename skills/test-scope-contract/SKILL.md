@@ -12,7 +12,7 @@ Hợp đồng để template DEV báo cho template AUTOTEST **cần test cái g�
 | Vai | Ai | Khi nào | Ghi vào |
 |---|---|---|---|
 | **Producer** | template DEV (`builder`, sau bug fix / feature) | cuối mỗi lần sửa | `.spec-cache/spec/test-scope/current.json` |
-| **Consumer** | template AUTOTEST | giai đoạn 0 của `/autotest` | đọc file trên + ghi `.context/test-status.json` (ở giai đoạn E) |
+| **Consumer** | template AUTOTEST | bước A (đầu luồng) của `/autotest` | đọc file trên + ghi `.context/test-status.json` (ở bước E) |
 
 ## Vị trí & schema
 
@@ -36,7 +36,7 @@ Template TEST ghi `.context/test-status.json`:
 
 ## Cách AUTOTEST dùng
 
-**`/autotest` (test tính năng MỚI)** — giai đoạn 0 đọc `.spec-cache/spec/test-scope/current.json` để xác định phạm vi ưu tiên:
+**`/autotest` (test tính năng MỚI)** — bước A đọc `.spec-cache/spec/test-scope/current.json` để xác định phạm vi ưu tiên:
 - `impact.direct` → sinh test mới / cập nhật test cũ
 - `impact.dependents` → test lại (bổ sung nếu thiếu)
 - `impact.regression` → chạy lại test đã có

@@ -23,7 +23,7 @@
    - `<TC-xx>` → 1 case cụ thể
 3. **Chạy NGẦM (headless)** — chạy lại phạm vi chọn, không bung browser → `.context/test-results/retest-headless-<scope>.json`
 4. **Chạy BROWSER (headed, bung hẳn ra)** — E2E chạy lại cho user theo dõi; cuối cùng **lưu kết quả + GIỮ browser mở** → `.context/test-results/retest-browser-<scope>.json`
-   - Với `--all`/1 cụm: chạy theo **từng case** như `/autotest` (xoạc xong 1 case chờ user chọn case tiếp nếu user muốn đi từng case).
+   - Với `--all`/1 cụm: chạy theo **từng case** như `/autotest` (xong 1 case chờ user chọn case tiếp nếu user muốn đi từng case).
 5. **Cập nhật trạng thái**: `status`/`lastRunAt` trong `test-registry.json` + `Test status` trong `.context/test-cases/<module>.md` + `test-tasks.json` + `coverage.json`.
    - `test-reflector` phân loại fail (`bug-test` / `bug-code`); vỡ do thay đổi chủ đích → cập nhật test code theo test case (không sửa test case cho khớp code).
 

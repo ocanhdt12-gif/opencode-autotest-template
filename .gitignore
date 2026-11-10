@@ -7,6 +7,6 @@ coverage/
 *.log
 .DS_Store
 .context/review-reports/
-tests/hidden/__stash__.md.spec-cache/
+tests/hidden/__stash__.md
 .spec-cache/
 .context/test-results/

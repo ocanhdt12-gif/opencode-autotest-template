@@ -7,7 +7,7 @@ _(tên + 1-2 câu mô tả)_
 
 ## Yêu cầu test mong muốn
 - Stack test: TS (Vitest) / Python (pytest) — chọn theo dự án
-- Nhánh cần dùng: A test-first (code mới) · B characterization (legacy) · C manual capture
+- Nhánh cần dùng: `/autotest` (test-case-first, mặc định) · `/characterize` (legacy) · `/capture-manual` (case test tay) · `/from-cases` (theo case user)
 - Mutation score mục tiêu: ≥ 70% (mặc định)
 
 ## Mục tiêu

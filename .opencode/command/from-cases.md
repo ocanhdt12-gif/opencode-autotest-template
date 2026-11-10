@@ -8,7 +8,7 @@ Chuyển bộ test case user/khách đưa (Excel/MD/sheet/checklist) thành auto
 ```
 
 ## Flow
-1. Đọc file test case user → parse thànhng danh sách case (id, input, expected, bước)
+1. Đọc file test case user → parse thành danh sách case (id, input, expected, bước)
 2. Với mỗi case:
    - ✅ Tự động hoá được → `test-writer` sinh test **đúng case đó**
    - ❌ Không (cần mắt người) → đánh dấu `manual-only` + lý do

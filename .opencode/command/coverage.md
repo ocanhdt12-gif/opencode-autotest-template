@@ -1,6 +1,6 @@
 # /coverage — Xem tiến độ test (CHỈ ĐỂ XEM)
 
-> ⚙️ **Tiến độ tự cập nhật — không cần gõ `/coverage`.** Sau khi **browser test** (`/autotest` giai đoạn 2) chạy xong, agent **tự cập nhật tiến độ** và ghi `.context/coverage.json` (xem `skills/complete-test-suite`). Chạy ngầm (headless) không cập nhật. Command này chỉ để **xem báo cáo**.
+> ⚙️ **Tiến độ tự cập nhật — không cần gõ `/coverage`.** Sau khi **browser test** (`/autotest` bước D (browser)) chạy xong, agent **tự cập nhật tiến độ** và ghi `.context/coverage.json` (xem `skills/complete-test-suite`). Chạy ngầm (headless) không cập nhật. Command này chỉ để **xem báo cáo**.
 
 **Tiến độ test thuộc template TEST** — chỉ template test biết nó đã chạy gì. **Danh sách req lấy từ spec** (`.spec-cache/SPECIFICATIONS.md`, đọc qua link git — test KHÔNG tạo spec); **trạng thái do bước tự động cuối luồng cập nhật**.
 
@@ -9,7 +9,7 @@
 /coverage                 → xem board: req nào covered/pending/untested/failing
 /coverage --gaps          → chỉ liệt kê phần CHƯA test (pending/untested/failing)
 ```
-> Cập nhật tiến độ: **tự động** sau khi browser test xong (không gõ). `/coverage --init` cũng đã tự động hoá — board thiếu thì bước cuối luồng tự khởi tạo danh sách req từ spec.
+> Cập nhật tiến độ: **tự động** sau khi browser test xong (không gõ). Việc khởi tạo board (danh sách req từ spec) cũng **tự động** ở bước cuối luồng khi board còn thiếu — không có lệnh `--init` thủ công.
 
 ## Nơi lưu: `.context/coverage.json` (repo TEST — KHÔNG phải trong .spec-cache)
 

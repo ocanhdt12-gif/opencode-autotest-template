@@ -39,7 +39,7 @@ Mọi test đều nuôi **1 bộ duy nhất** trong repo — vừa **retest tín
 }
 ```
 
-**Producer:** template DEV. **Consumer:** template AUTOTEST giai đoạn 0 của `/autotest`.
+**Producer:** template DEV. **Consumer:** template AUTOTEST ở bước A (đầu luồng) của `/autotest`.
 
 ---
 
@@ -59,7 +59,7 @@ Mọi test đều nuôi **1 bộ duy nhất** trong repo — vừa **retest tín
 ### Các lần sau
 Vào `/autotest` → đọc spec → lấy task **chưa test** (`test-tasks.json`) → tạo test case → chạy luồng bước 4–8.
 
-### Chi tiết giai đoạn
+### Chi tiết các bước (A–E)
 
 | Bước | Làm gì | Output |
 |---|---|---|

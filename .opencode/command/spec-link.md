@@ -17,7 +17,7 @@ Template TEST **không lưu spec** — trỏ tới folder spec trong repo DEV (1
    git clone --depth 1 --branch <branch> <gitUrl> .spec-cache
    # repo lớn → optional: --filter=blob:none --sparse + sparse-checkout set spec .spec-cache/SPECIFICATIONS.md
    ```
-3. Verify `.spec-cache/SPECIFICATIONS.md` + `.spec-cache/spec/test-scope/current.json` tồn tại
+3. Verify `.spec-cache/SPECIFICATIONS.md` tồn tại (BẮT BUỘC). `.spec-cache/spec/test-scope/current.json` là OPTIONAL — repo greenfield/lần đầu có thể chưa có (DEV sinh sau mỗi feature/bug-fix); thiếu thì cảnh báo, KHÔNG block.
 4. Đọc `spec_version` → lưu `lastSyncedSpecVersion`; báo user
 
 ## Flow (sync)

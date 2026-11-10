@@ -99,6 +99,7 @@ Tiến độ **tự cập nhật sau khi chạy** (không gõ `/coverage` để 
 │   ├── test-cases/       ← TEST CASE dạng BẢNG theo module (<module>.md, TC-xx, draft→approved; task mới: cùng module=update file cũ, module mới=file mới)
 │   ├── test-tasks.json   ← trạng thái task (case nào đã/chưa test)
 │   ├── test-results/     ← headless-run.json · browser-run.json · bugs.md
+│   ├── manual-cases/     ← case test TAY chưa chuyển auto (/capture-manual đọc <case-id>.md)
 │   ├── coverage.json     ← tiến độ theo requirement
 │   └── test-status.json  ← tiến độ theo spec version
 ├── docs/

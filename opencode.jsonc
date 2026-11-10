@@ -30,17 +30,17 @@
       "git push*--force*": "deny",
       "git push -f*": "deny",
       "git reset --hard*": "deny",
-      "rm -rf*": "ask"
-    },
+      "rm -rf*": "ask",
 
-    // Test framework chạy tự do (cần thiết cho workflow autotest)
-    "npm test*": "allow",
-    "pytest*": "allow",
-    "uv run pytest*": "allow",
-    "npx vitest*": "allow",
-    "npx stryker*": "allow",
-    "npx playwright*": "allow",
-    "mutmut*": "allow"
+      // Test framework chạy tự do (cần thiết cho workflow autotest headless)
+      "npm test*": "allow",
+      "pytest*": "allow",
+      "uv run pytest*": "allow",
+      "npx vitest*": "allow",
+      "npx stryker*": "allow",
+      "npx playwright*": "allow",
+      "mutmut*": "allow"
+    },
   },
 
   "model": "auto"

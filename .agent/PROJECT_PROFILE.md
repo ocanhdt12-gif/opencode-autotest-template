@@ -28,5 +28,5 @@
 ## Bắt buộc khi khởi tạo
 1. `/spec-link <git-url>` — link folder spec của repo DEV (spec KHÔNG lưu ở đây)
 2. Hỏi **link deploy web** → điền `web_app_url` (baseURL cho test browser/E2E)
-2. Chạy spec-validator PASS trước khi sinh test case
-3. Khởi tạo `tests/` + `.context/test-cases/` + `.context/test-tasks.json` + `.context/test-results/` + `.context/manual-cases/` + `tests/hidden/` + `test-registry.json`
+3. Chạy spec-validator PASS trước khi sinh test case
+4. Khởi tạo `tests/` + `.context/test-cases/` + `.context/test-tasks.json` + `.context/test-results/` + `.context/manual-cases/` + `tests/hidden/` + `test-registry.json`
