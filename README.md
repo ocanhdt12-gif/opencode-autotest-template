@@ -111,7 +111,7 @@ Tiến độ **tự cập nhật sau khi chạy** (không gõ `/coverage` để 
 │   └── command/          ← /autotest · /retest · /characterize · /capture-manual · /from-cases · /verify-tests · /spec-link · /coverage
 ├── .agent/               ← spec-validator · workflow (FEATURE_WORKFLOW + PROJECT_PROFILE)
 ├── skills/               ← test-case-first · property-based-testing · mutation-testing · characterization-golden · manual-to-auto · test-quality-gate · coverage-driven · complete-test-suite · test-scope-contract
-└── scripts/              ← generate-inventory
+└── scripts/              ← generate-inventory + template-sync (kéo update template về)
 ```
 
 ## Nguyên tắc (bất biến)
@@ -125,3 +125,21 @@ Tiến độ **tự cập nhật sau khi chạy** (không gõ `/coverage` để 
 7. **Characterization = khóa behavior hiện tại, không phải "đúng"**
 8. **Test sinh bởi AI phải qua gate** — không merge test chưa qua `/verify-tests`
 9. **Mọi test mới vào bộ hoàn chỉnh** — tra registry trước, append/cập nhật, không dựng suite song song
+
+## Cập nhật template (template-sync)
+
+Khi template autotest canonical có bản mới (thêm skill, sửa command, cải tiến luồng), project tạo từ nó kéo update về:
+
+```bash
+node scripts/template-sync.mjs --dry-run   # xem trước thay đổi (không ghi)
+node scripts/template-sync.mjs             # áp update
+node scripts/template-sync.mjs --prune     # + xoá file template đã bỏ
+```
+
+- **Chỉ ghi đè path của template:** `AGENT.md` · `AGENTS.md` · `.agent/` · `.opencode/` · `scripts/` · `skills/` · `docs/`
+- **KHÔNG BAO GIỜ đụng path của project test:** `.context/` (tiến độ + test case + kết quả) · `spec-source.json` (link git riêng) · `.spec-cache/` · `test-registry.json` · `tests/` · `BRIEF.md` · `README.md`
+- `opencode.jsonc` chỉ **cảnh báo drift** (không tự đổi — project có thể tuỳ biến permission).
+- An toàn: managedPaths đang dirty (chưa commit) → script **DỪNG**. Mọi thay đổi nằm trong git → `git checkout --` để undo.
+- Config tuỳ chọn `<project>/.template-sync.json`: `{ "managedPaths": [...], "reportOnlyPaths": [...], "templateRepo": "..." }`.
+
+> ⚠️ Phân biệt với **spec sync** (`/spec-link --sync`): spec sync kéo **SPEC** từ repo DEV về `.spec-cache/`; template-sync kéo **bản thân template test** mới nhất về project. Hai cái độc lập.
